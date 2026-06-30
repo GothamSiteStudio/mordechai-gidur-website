@@ -148,7 +148,218 @@ def build_service_pages():
         print(f"Created service page: {filename}")
 
 
+# ---------- Blog ----------
+def _render_article_sections(sections):
+    html = []
+    for s in sections:
+        html.append(f'                    <h2>{s["heading"]}</h2>')
+        for p in s["paragraphs"]:
+            html.append(f'                    <p>{p}</p>')
+        if s.get("list"):
+            html.append('                    <ul class="article-list">')
+            for it in s["list"]:
+                html.append(f'                        <li><i class="fas fa-check"></i> {it}</li>')
+            html.append('                    </ul>')
+    return "\n".join(html)
+
+
+def _render_faq(faq):
+    if not faq:
+        return ""
+    parts = ['                    <h2>שאלות נפוצות</h2>', '                    <div class="blog-faq">']
+    for f in faq:
+        parts.append('                        <details class="blog-faq-item">')
+        parts.append(f'                            <summary>{f["q"]}</summary>')
+        parts.append(f'                            <div class="blog-faq-answer"><p>{f["a"]}</p></div>')
+        parts.append('                        </details>')
+    parts.append('                    </div>')
+    return "\n".join(parts)
+
+
+def _render_related_sidebar(related):
+    links = "\n".join(
+        f'                        <li><a href="{r["url"]}">{r["name"]}</a></li>' for r in related
+    )
+    return links
+
+
+def _post_schema(post, url):
+    blocks = [{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post["title"],
+        "description": post["excerpt"],
+        "image": f"{SITE}/pictures/{post['image']}",
+        "datePublished": post["date"],
+        "dateModified": post["date"],
+        "author": {"@type": "Organization", "name": "מרדכי סיונוב גידור אתרי בניה", "url": f"{SITE}/"},
+        "publisher": {
+            "@type": "Organization",
+            "name": "מרדכי סיונוב גידור אתרי בניה",
+            "logo": {"@type": "ImageObject", "url": f"{SITE}/logo.svg"},
+        },
+        "mainEntityOfPage": url,
+    }]
+    if post.get("faq"):
+        blocks.append({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {"@type": "Question", "name": f["q"],
+                 "acceptedAnswer": {"@type": "Answer", "text": f["a"]}}
+                for f in post["faq"]
+            ],
+        })
+    import json as _json
+    return "\n".join(
+        '    <script type="application/ld+json">\n    '
+        + _json.dumps(b, ensure_ascii=False, indent=4).replace("\n", "\n    ")
+        + "\n    </script>"
+        for b in blocks
+    )
+
+
+CTA_BOX = """                    <div class="cta-box">
+                        <h3>צריכים גידור לאתר הבנייה שלכם?</h3>
+                        <p>נשמח לייעץ ולהכין הצעת מחיר מותאמת, ללא התחייבות.</p>
+                        <div class="cta-buttons">
+                            <a href="tel:0507575570" class="btn btn-primary"><i class="fas fa-phone-alt"></i> 050-757-5570</a>
+                            <a href="https://wa.me/972507575570" class="btn btn-secondary-dark" target="_blank"><i class="fab fa-whatsapp"></i> וואטסאפ</a>
+                        </div>
+                    </div>"""
+
+
+def _build_post_content(post):
+    sections = _render_article_sections(post["sections"])
+    faq = _render_faq(post.get("faq"))
+    related = _render_related_sidebar(post["related_services"])
+    img = f"/pictures/{post['image']}"
+    return f"""        <nav class="breadcrumbs" aria-label="ניווט משני">
+            <div class="container">
+                <ol>
+                    <li><a href="/">דף הבית</a></li>
+                    <li><a href="/blog/">בלוג</a></li>
+                    <li>{post["title"]}</li>
+                </ol>
+            </div>
+        </nav>
+
+        <section class="blog-post-hero" style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('{img}');">
+            <div class="container">
+                <span class="blog-category-badge">{post["category"]}</span>
+                <h1>{post["title"]}</h1>
+                <div class="blog-post-meta">
+                    <span><i class="far fa-calendar"></i> {post["date_display"]}</span>
+                    <span><i class="far fa-clock"></i> {post["read_time"]}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding">
+            <div class="container blog-article-layout">
+                <article class="article-body">
+                    <p class="article-lead">{post["excerpt"]}</p>
+{sections}
+{faq}
+{CTA_BOX}
+                </article>
+
+                <aside class="blog-sidebar">
+                    <div class="sidebar-box">
+                        <h4>שירותים רלוונטיים</h4>
+                        <ul class="sidebar-links">
+{related}
+                        </ul>
+                    </div>
+                    <div class="sidebar-box sidebar-contact">
+                        <h4>שיחת ייעוץ חינם</h4>
+                        <p><i class="fas fa-phone"></i> <a href="tel:0507575570">050-757-5570</a></p>
+                        <p><i class="fas fa-envelope"></i> <a href="mailto:m0507575570@gmail.com">m0507575570@gmail.com</a></p>
+                    </div>
+                    <div class="sidebar-box">
+                        <a href="/blog/" class="btn btn-secondary-dark btn-block"><i class="fas fa-arrow-right"></i> חזרה לכל המאמרים</a>
+                    </div>
+                </aside>
+            </div>
+        </section>"""
+
+
+def _build_index_content(posts):
+    cards = []
+    for post in posts:
+        img = f"/pictures/{post['image']}"
+        cards.append(f"""                <article class="blog-card">
+                    <a href="/blog/{post['slug']}" class="blog-card-link">
+                        <div class="blog-card-image"><img src="{img}" alt="{post['image_alt']}" loading="lazy"></div>
+                        <div class="blog-card-body">
+                            <span class="blog-category-badge">{post['category']}</span>
+                            <h2 class="blog-card-title">{post['title']}</h2>
+                            <p class="blog-card-excerpt">{post['excerpt']}</p>
+                            <span class="blog-card-meta"><i class="far fa-calendar"></i> {post['date_display']} · {post['read_time']}</span>
+                        </div>
+                    </a>
+                </article>""")
+    cards_html = "\n".join(cards)
+    return f"""        <section class="blog-index-hero">
+            <div class="container">
+                <h1>הבלוג של מרדכי סיונוב גידור</h1>
+                <p>מדריכים, טיפים ומידע מקצועי על גידור אתרי בנייה — סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט.</p>
+            </div>
+        </section>
+
+        <section class="section-padding bg-light">
+            <div class="container">
+                <div class="blog-grid">
+{cards_html}
+                </div>
+            </div>
+        </section>"""
+
+
+def build_blog():
+    posts = read_json("data_blog.json")
+    posts = sorted(posts, key=lambda p: p["date"], reverse=True)
+    template = Path("template_blog.html").read_text(encoding="utf-8")
+    output_dir = Path("blog")
+    output_dir.mkdir(exist_ok=True)
+
+    # Individual posts
+    for post in posts:
+        url = f"{SITE}/blog/{post['slug']}"
+        page = template
+        page = page.replace("{meta_title}", post["meta_title"])
+        page = page.replace("{meta_description}", post["meta_description"])
+        page = page.replace("{meta_keywords}", post["meta_keywords"])
+        page = page.replace("{canonical}", url)
+        page = page.replace("{schema}", _post_schema(post, url))
+        page = page.replace("{content}", _build_post_content(post))
+        write_file(output_dir / f"{post['slug']}.html", page)
+        print(f"Created blog post: blog/{post['slug']}.html")
+
+    # Index
+    index_schema = {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "הבלוג של מרדכי סיונוב גידור אתרי בניה",
+        "url": f"{SITE}/blog/",
+    }
+    import json as _json
+    schema_html = ('    <script type="application/ld+json">\n    '
+                   + _json.dumps(index_schema, ensure_ascii=False, indent=4).replace("\n", "\n    ")
+                   + "\n    </script>")
+    page = template
+    page = page.replace("{meta_title}", "בלוג גידור אתרי בנייה — מדריכים וטיפים | מרדכי סיונוב")
+    page = page.replace("{meta_description}", "הבלוג של מרדכי סיונוב גידור אתרי בניה: מדריכים על סוגי גדרות, מחירים, בטיחות ותקנים בגידור אתרי בנייה. ידע מקצועי מהשטח.")
+    page = page.replace("{meta_keywords}", "בלוג גידור, גידור אתרי בניה, גדר איסכורית, מחיר גידור, תקנים בטיחות")
+    page = page.replace("{canonical}", f"{SITE}/blog/")
+    page = page.replace("{schema}", schema_html)
+    page = page.replace("{content}", _build_index_content(posts))
+    write_file(output_dir / "index.html", page)
+    print("Created blog index: blog/index.html")
+
+
 if __name__ == "__main__":
     build_city_pages()
     build_service_pages()
+    build_blog()
     print("Done! All pages created successfully.")
