@@ -11,6 +11,15 @@ def write_file(path: Path, content: str):
     path.write_text(content, encoding="utf-8")
 
 
+SITE = "https://mordechaigidur.co.il"
+
+
+def service_url(filename: str) -> str:
+    """Clean, root-relative URL for a service page (no .html). e.g. iskurit.html -> /services/iskurit"""
+    name = filename[:-5] if filename.endswith(".html") else filename
+    return f"/services/{name}"
+
+
 # ---------- City pages ----------
 def build_city_pages():
     pages = read_json("data.json")
@@ -19,7 +28,9 @@ def build_city_pages():
     output_dir.mkdir(exist_ok=True)
 
     for page in pages:
+        canonical = f"{SITE}/service-areas/{page['filename'][:-5]}"
         new_content = template
+        new_content = new_content.replace("{canonical}", canonical)
         new_content = new_content.replace("{city_name}", page["city_name"])
         new_content = new_content.replace("{region}", page["region"])
         new_content = new_content.replace("{seo_desc_start}", page["seo_desc_start"])
@@ -38,7 +49,7 @@ def _render_links(items, indent=0, exclude=None):
     for item in items:
         if exclude and item["filename"] == exclude:
             continue
-        lines.append(f'{pad}<li><a href="{item["filename"]}">{item["service_name"]}</a></li>')
+        lines.append(f'{pad}<li><a href="{service_url(item["filename"])}">{item["service_name"]}</a></li>')
     return "\n".join(lines)
 
 
@@ -72,7 +83,7 @@ def _render_related(items, indent=0):
     cards = []
     for rel in items:
         cards.append(
-            f"""{pad}<a href="{rel["filename"]}" class="related-service-card">
+            f"""{pad}<a href="{service_url(rel["filename"])}" class="related-service-card">
 {card_pad}<i class="{rel["icon"]}"></i>
 {card_pad}<h4>{rel["title"]}</h4>
 {pad}</a>"""
