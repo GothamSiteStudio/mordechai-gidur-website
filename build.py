@@ -176,6 +176,23 @@ def _render_faq(faq):
     return "\n".join(parts)
 
 
+def _render_sources(sources):
+    if not sources:
+        return ""
+    parts = [
+        '                    <h2>מקורות ולמידע נוסף</h2>',
+        '                    <p class="sources-note">המידע הרגולטורי במאמר מבוסס על המקורות הרשמיים הבאים. אין באמור תחליף לייעוץ בטיחות פרטני או לעיון בנוסח המחייב של התקנות:</p>',
+        '                    <ul class="article-list">',
+    ]
+    for s in sources:
+        parts.append(
+            f'                        <li><i class="fas fa-external-link-alt"></i> '
+            f'<a href="{s["url"]}" target="_blank" rel="nofollow noopener">{s["name"]}</a></li>'
+        )
+    parts.append('                    </ul>')
+    return "\n".join(parts)
+
+
 def _render_related_sidebar(related):
     links = "\n".join(
         f'                        <li><a href="{r["url"]}">{r["name"]}</a></li>' for r in related
@@ -232,6 +249,7 @@ CTA_BOX = """                    <div class="cta-box">
 def _build_post_content(post):
     sections = _render_article_sections(post["sections"])
     faq = _render_faq(post.get("faq"))
+    sources = _render_sources(post.get("sources"))
     related = _render_related_sidebar(post["related_services"])
     img = f"/pictures/{post['image']}"
     return f"""        <nav class="breadcrumbs" aria-label="ניווט משני">
@@ -261,6 +279,7 @@ def _build_post_content(post):
                     <p class="article-lead">{post["excerpt"]}</p>
 {sections}
 {faq}
+{sources}
 {CTA_BOX}
                 </article>
 
