@@ -55,7 +55,7 @@ def _render_links(items, indent=0, exclude=None):
 
 def _render_benefits(items, indent=0):
     pad = " " * indent
-    return "\n".join(f'{pad}<li><i class="fas fa-check"></i> {text}</li>' for text in items)
+    return "\n".join(f'{pad}<li><i class="fas fa-check" aria-hidden="true"></i> {text}</li>' for text in items)
 
 
 def _render_list(items, indent=0):
@@ -84,7 +84,7 @@ def _render_related(items, indent=0):
     for rel in items:
         cards.append(
             f"""{pad}<a href="{service_url(rel["filename"])}" class="related-service-card">
-{card_pad}<i class="{rel["icon"]}"></i>
+{card_pad}<i class="{rel["icon"]}" aria-hidden="true"></i>
 {card_pad}<h4>{rel["title"]}</h4>
 {pad}</a>"""
         )
@@ -158,7 +158,7 @@ def _render_article_sections(sections):
         if s.get("list"):
             html.append('                    <ul class="article-list">')
             for it in s["list"]:
-                html.append(f'                        <li><i class="fas fa-check"></i> {it}</li>')
+                html.append(f'                        <li><i class="fas fa-check" aria-hidden="true"></i> {it}</li>')
             html.append('                    </ul>')
     return "\n".join(html)
 
@@ -186,7 +186,7 @@ def _render_sources(sources):
     ]
     for s in sources:
         parts.append(
-            f'                        <li><i class="fas fa-external-link-alt"></i> '
+            f'                        <li><i class="fas fa-external-link-alt" aria-hidden="true"></i> '
             f'<a href="{s["url"]}" target="_blank" rel="nofollow noopener">{s["name"]}</a></li>'
         )
     parts.append('                    </ul>')
@@ -240,8 +240,8 @@ CTA_BOX = """                    <div class="cta-box">
                         <h3>צריכים גידור לאתר הבנייה שלכם?</h3>
                         <p>נשמח לייעץ ולהכין הצעת מחיר מותאמת, ללא התחייבות.</p>
                         <div class="cta-buttons">
-                            <a href="tel:0507575570" class="btn btn-primary"><i class="fas fa-phone-alt"></i> 050-757-5570</a>
-                            <a href="https://wa.me/972507575570" class="btn btn-secondary-dark" target="_blank"><i class="fab fa-whatsapp"></i> וואטסאפ</a>
+                            <a href="tel:0507575570" class="btn btn-primary"><i class="fas fa-phone-alt" aria-hidden="true"></i> 050-757-5570</a>
+                            <a href="https://wa.me/972507575570" class="btn btn-secondary-dark" target="_blank"><i class="fab fa-whatsapp" aria-hidden="true"></i> וואטסאפ</a>
                         </div>
                     </div>"""
 
@@ -267,8 +267,8 @@ def _build_post_content(post):
                 <span class="blog-category-badge">{post["category"]}</span>
                 <h1>{post["title"]}</h1>
                 <div class="blog-post-meta">
-                    <span><i class="far fa-calendar"></i> {post["date_display"]}</span>
-                    <span><i class="far fa-clock"></i> {post["read_time"]}</span>
+                    <span><i class="far fa-calendar" aria-hidden="true"></i> {post["date_display"]}</span>
+                    <span><i class="far fa-clock" aria-hidden="true"></i> {post["read_time"]}</span>
                 </div>
             </div>
         </section>
@@ -292,11 +292,11 @@ def _build_post_content(post):
                     </div>
                     <div class="sidebar-box sidebar-contact">
                         <h4>שיחת ייעוץ חינם</h4>
-                        <p><i class="fas fa-phone"></i> <a href="tel:0507575570">050-757-5570</a></p>
-                        <p><i class="fas fa-envelope"></i> <a href="mailto:m0507575570@gmail.com">m0507575570@gmail.com</a></p>
+                        <p><i class="fas fa-phone" aria-hidden="true"></i> <a href="tel:0507575570">050-757-5570</a></p>
+                        <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:m0507575570@gmail.com">m0507575570@gmail.com</a></p>
                     </div>
                     <div class="sidebar-box">
-                        <a href="/blog/" class="btn btn-secondary-dark btn-block"><i class="fas fa-arrow-right"></i> חזרה לכל המאמרים</a>
+                        <a href="/blog/" class="btn btn-secondary-dark btn-block"><i class="fas fa-arrow-right" aria-hidden="true"></i> חזרה לכל המאמרים</a>
                     </div>
                 </aside>
             </div>
@@ -314,7 +314,7 @@ def _build_index_content(posts):
                             <span class="blog-category-badge">{post['category']}</span>
                             <h2 class="blog-card-title">{post['title']}</h2>
                             <p class="blog-card-excerpt">{post['excerpt']}</p>
-                            <span class="blog-card-meta"><i class="far fa-calendar"></i> {post['date_display']} · {post['read_time']}</span>
+                            <span class="blog-card-meta"><i class="far fa-calendar" aria-hidden="true"></i> {post['date_display']} · {post['read_time']}</span>
                         </div>
                     </a>
                 </article>""")

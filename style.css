@@ -3,6 +3,7 @@
     --primary-color: #0c2d48; /* כחול כהה מהלוגו */
     --secondary-color: #2e8bc0; /* כחול בהיר יותר */
     --accent-color: #f39c12; /* כתום להנעה לפעולה - משתלב מעולה עם כחול */
+    --accent-dark: #9a5b00; /* כתום כהה נגיש - לטקסט לבן על רקע כתום (יחס ניגודיות >=4.5:1) */
     --text-dark: #333333;
     --text-light: #f4f4f4;
     --white: #ffffff;
@@ -82,14 +83,14 @@ img {
 }
 
 .btn-primary {
-    background-color: #c77d0e;
+    background-color: var(--accent-dark);
     color: var(--white);
-    border: 2px solid #c77d0e;
+    border: 2px solid var(--accent-dark);
 }
 
 .btn-primary:hover {
-    background-color: #a86a0c;
-    border-color: #a86a0c;
+    background-color: #7e4a00;
+    border-color: #7e4a00;
     transform: translateY(-2px);
 }
 
@@ -224,10 +225,15 @@ nav {
     gap: 40px;
 }
 
-.has-mega-dropdown:hover .mega-menu {
+.has-mega-dropdown:hover .mega-menu,
+.has-mega-dropdown:focus-within .mega-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+}
+
+.has-mega-dropdown:focus-within > a i {
+    transform: rotate(180deg);
 }
 
 .mega-menu-areas {
@@ -343,7 +349,7 @@ nav {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: var(--accent-color);
+    background-color: var(--accent-dark);
     color: var(--white);
     padding: 12px 20px;
     border-radius: 5px;
@@ -352,7 +358,7 @@ nav {
 }
 
 .phone-link:hover {
-    background-color: #e67e22;
+    background-color: #7e4a00;
     transform: scale(1.05);
 }
 
@@ -524,7 +530,7 @@ nav {
 .stat-plus {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--accent-color);
+    color: var(--accent-dark);
     display: inline;
     vertical-align: top;
 }
@@ -675,7 +681,7 @@ nav {
 
 .clients-title {
     text-align: center;
-    color: #999;
+    color: #5f5f5f;
     font-size: 0.95rem;
     margin-bottom: 25px;
 }
@@ -1022,13 +1028,19 @@ nav {
 }
 
 .faq-answer {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+    transition: grid-template-rows 0.3s ease, padding 0.3s ease;
+}
+
+.faq-answer > p {
+    min-height: 0;
+    overflow: hidden;
 }
 
 .faq-item.active .faq-answer {
-    max-height: 300px;
+    grid-template-rows: 1fr;
     padding: 0 25px 20px;
 }
 
@@ -1135,7 +1147,7 @@ nav {
 .form-group textarea {
     width: 100%;
     padding: 14px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #767676;
     border-radius: 5px;
     font-family: inherit;
     font-size: 1rem;
@@ -1359,7 +1371,7 @@ footer {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--accent-color);
+    background: var(--accent-dark);
     color: var(--white);
     padding: 12px 24px;
     border-radius: 6px;
@@ -1369,7 +1381,7 @@ footer {
 }
 
 .map-directions-btn:hover {
-    background: #e08a00;
+    background: #7e4a00;
     transform: translateY(-2px);
 }
 
@@ -1634,12 +1646,12 @@ footer {
 }
 
 .sticky-call {
-    background-color: #c77d0e;
+    background-color: var(--accent-dark);
     color: var(--white);
 }
 
 .sticky-call:hover {
-    background-color: #a86a0c;
+    background-color: #7e4a00;
 }
 
 .sticky-whatsapp {
@@ -2091,12 +2103,12 @@ textarea:focus {
 }
 
 .cookie-btn-accept {
-    background-color: #c77d0e;
+    background-color: var(--accent-dark);
     color: var(--white);
 }
 
 .cookie-btn-accept:hover {
-    background-color: #a86a0c;
+    background-color: #7e4a00;
     transform: translateY(-2px);
 }
 
@@ -2472,7 +2484,7 @@ textarea:focus {
 .blog-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .blog-card:hover .blog-card-image img { transform: scale(1.05); }
 .blog-card-body { padding: 22px; }
-.blog-category-badge { display: inline-block; background: var(--accent-color); color: #fff; font-size: 0.8rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
+.blog-category-badge { display: inline-block; background: var(--accent-dark); color: #fff; font-size: 0.8rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 12px; }
 .blog-card-title { font-size: 1.25rem; color: var(--primary-color); margin-bottom: 10px; line-height: 1.4; }
 .blog-card-excerpt { color: #666; font-size: 0.95rem; line-height: 1.7; margin-bottom: 14px; }
 .blog-card-meta { color: #999; font-size: 0.85rem; }
@@ -2510,8 +2522,8 @@ textarea:focus {
 .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* Buttons (shared additions) */
-.btn-secondary-dark { background: var(--accent-color); color: #fff; }
-.btn-secondary-dark:hover { background: #d9890c; color: #fff; }
+.btn-secondary-dark { background: var(--accent-dark); color: #fff; }
+.btn-secondary-dark:hover { background: #7e4a00; color: #fff; }
 .btn-block { display: flex; width: 100%; }
 
 /* Sidebar (shared with service pages) */
@@ -2534,4 +2546,63 @@ textarea:focus {
   .blog-index-hero h1, .blog-post-hero h1 { font-size: 1.7rem; }
   .blog-grid { grid-template-columns: 1fr; }
   .blog-post-meta { gap: 14px; }
+}
+
+/* ============================================================
+   ACCESSIBILITY REMEDIATION (WCAG 2.1 AA)
+   ============================================================ */
+
+/* 1.4.3 Contrast — darker blue for body-size links on light backgrounds */
+.breadcrumbs a,
+.sidebar-links a,
+.sidebar-contact a,
+.legal-article .contact-details a,
+.legal-article .highlight-box a {
+    color: #1f6f9e;
+}
+
+/* 1.4.3 Contrast — high-contrast mode: darken light surfaces that host dark-keyed text */
+.a11y-high-contrast .contact-form-box,
+.a11y-high-contrast .mega-menu,
+.a11y-high-contrast .dropdown-menu {
+    background: #0f1621;
+    border-color: #ffeb3b;
+}
+
+.a11y-high-contrast .mega-menu-column h4,
+.a11y-high-contrast .mega-menu-column ul li a,
+.a11y-high-contrast .dropdown-menu li a {
+    color: #ffffff;
+}
+
+.a11y-high-contrast .contact-form-box .form-note {
+    color: #e6e6e6;
+}
+
+.a11y-high-contrast .form-group input,
+.a11y-high-contrast .form-group select,
+.a11y-high-contrast .form-group textarea {
+    background: #0f1621;
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+.a11y-high-contrast .form-group input::placeholder,
+.a11y-high-contrast .form-group textarea::placeholder {
+    color: #e0e0e0;
+}
+
+/* Respect the operating-system "reduce motion" preference automatically */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }
