@@ -22,7 +22,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://www.negishim.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap"></noscript>
     
     <!-- Font Awesome - loaded with media print hack to avoid render blocking -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
@@ -63,6 +64,7 @@
         }
     }
     </script>
+{faq_schema}
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -182,6 +184,10 @@
         <p>{unique_paragraph_1}</p>
         <h2>פתרונות גידור נפוצים ב{city_name}</h2>
         <p>{unique_paragraph_2}</p>
+{extra_sections}
+{recommended_block}
+{faq_block}
+{cta_block}
     </section>
     </main>
 

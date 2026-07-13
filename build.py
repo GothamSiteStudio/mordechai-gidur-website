@@ -20,6 +20,64 @@ def service_url(filename: str) -> str:
     return f"/services/{name}"
 
 
+# ---------- City page content blocks (enriched local content) ----------
+def _render_city_sections(sections, indent=8):
+    pad = " " * indent
+    html = []
+    for s in sections:
+        html.append(f'{pad}<h2>{s["heading"]}</h2>')
+        for p in s.get("paragraphs", []):
+            html.append(f'{pad}<p>{p}</p>')
+    return "\n".join(html)
+
+
+def _render_city_recommended(recommended, city_name, indent=8):
+    if not recommended:
+        return ""
+    pad = " " * indent
+    parts = [f'{pad}<h2>שירותי הגידור המומלצים ב{city_name}</h2>',
+             f'{pad}<ul class="article-list">']
+    for r in recommended:
+        parts.append(
+            f'{pad}    <li><i class="fas fa-check" aria-hidden="true"></i> '
+            f'<a href="{service_url(r["filename"])}"><strong>{r["label"]}</strong></a> — {r["reason"]}</li>'
+        )
+    parts.append(f'{pad}</ul>')
+    return "\n".join(parts)
+
+
+def _render_city_faq(faq, indent=8):
+    if not faq:
+        return ""
+    pad = " " * indent
+    parts = [f'{pad}<h2>שאלות נפוצות — גידור אתרי בנייה</h2>', f'{pad}<div class="blog-faq">']
+    for f in faq:
+        parts.append(f'{pad}    <details class="blog-faq-item">')
+        parts.append(f'{pad}        <summary>{f["q"]}</summary>')
+        parts.append(f'{pad}        <div class="blog-faq-answer"><p>{f["a"]}</p></div>')
+        parts.append(f'{pad}    </details>')
+    parts.append(f'{pad}</div>')
+    return "\n".join(parts)
+
+
+def _city_faq_schema(faq):
+    if not faq:
+        return ""
+    import json as _json
+    block = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": f["q"],
+             "acceptedAnswer": {"@type": "Answer", "text": f["a"]}}
+            for f in faq
+        ],
+    }
+    return ('    <script type="application/ld+json">\n    '
+            + _json.dumps(block, ensure_ascii=False, indent=4).replace("\n", "\n    ")
+            + "\n    </script>")
+
+
 # ---------- City pages ----------
 def build_city_pages():
     pages = read_json("data.json")
@@ -29,7 +87,20 @@ def build_city_pages():
 
     for page in pages:
         canonical = f"{SITE}/service-areas/{page['filename'][:-5]}"
+        faq = page.get("faq", [])
+        extra_sections = _render_city_sections(page.get("sections", []))
+        recommended_block = _render_city_recommended(page.get("recommended", []), page["city_name"])
+        faq_block = _render_city_faq(faq)
+        faq_schema = _city_faq_schema(faq)
+        # Only show the CTA once the page actually has enriched content below the intro.
+        cta_block = CTA_BOX if (page.get("sections") or faq) else ""
+
         new_content = template
+        new_content = new_content.replace("{extra_sections}", extra_sections)
+        new_content = new_content.replace("{recommended_block}", recommended_block)
+        new_content = new_content.replace("{faq_block}", faq_block)
+        new_content = new_content.replace("{cta_block}", cta_block)
+        new_content = new_content.replace("{faq_schema}", faq_schema)
         new_content = new_content.replace("{canonical}", canonical)
         new_content = new_content.replace("{city_name}", page["city_name"])
         new_content = new_content.replace("{region}", page["region"])
