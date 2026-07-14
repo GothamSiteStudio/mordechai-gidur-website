@@ -181,8 +181,15 @@ def build_service_pages():
         sidebar_links = _render_links(services, indent=28, exclude=svc["filename"])
         footer_service_links = _render_links(footer_services, indent=24)
         related_cards = _render_related(svc["related"], indent=20)
+        # Optional enriched content + FAQ (durable, JSON-driven; mirrors city pages).
+        extra_sections = _render_city_sections(svc.get("sections", []))
+        faq_block = _render_city_faq(svc.get("faq", []))
+        faq_schema = _city_faq_schema(svc.get("faq", []))
 
         replacements = {
+            "{extra_sections}": extra_sections,
+            "{faq_block}": faq_block,
+            "{faq_schema}": faq_schema,
             "{meta_title}": svc["meta_title"],
             "{meta_description}": svc["meta_description"],
             "{meta_keywords}": svc["meta_keywords"],

@@ -59,6 +59,13 @@
           "אנחנו נשמח לבחון איתכם את האתר ולהמליץ על הפתרון המשתלם והבטיחותי ביותר עבורכם, ללא התחייבות."
         ],
         "list": []
+      },
+      {
+        "heading": "סיכום: מתי לבחור גדר איסכורית ומתי גדר פאנל",
+        "paragraphs": [
+          "לאתר בנייה זמני, גדר איסכורית כמעט תמיד המנצחת: היא זולה יחסית, מוקמת במהירות, אוטמת את האתר לחלוטין ועומדת בתקנות הבטיחות, ולכן היא הבחירה הטבעית של קבלנים לתקופת הפרויקט.",
+          "לגידור קבוע ואסתטי, למשל גבולות מגרש, מוסדות ובתים פרטיים, שווה לשקול גדר פאנל בזכות המראה והעמידות ארוכת-הטווח. מרדכי גידור יסייע לכם לבחור ולהתקין את הפתרון הנכון לצרכים שלכם."
+        ]
       }
     ],
     "faq": [
@@ -76,9 +83,18 @@
       }
     ],
     "related_services": [
-      { "name": "גידור איסכורית", "url": "/services/iskurit" },
-      { "name": "גדר פאנל", "url": "/services/panel" },
-      { "name": "מיתוג גדרות", "url": "/services/branding" }
+      {
+        "name": "גידור איסכורית",
+        "url": "/services/iskurit"
+      },
+      {
+        "name": "גדר פאנל",
+        "url": "/services/panel"
+      },
+      {
+        "name": "מיתוג גדרות",
+        "url": "/services/branding"
+      }
     ]
   },
   {
@@ -148,9 +164,18 @@
       }
     ],
     "related_services": [
-      { "name": "גידור איסכורית", "url": "/services/iskurit" },
-      { "name": "גדר רשת זמנית", "url": "/services/reshet" },
-      { "name": "שערים לאתרי בניה", "url": "/services/gates" }
+      {
+        "name": "גידור איסכורית",
+        "url": "/services/iskurit"
+      },
+      {
+        "name": "גדר רשת זמנית",
+        "url": "/services/reshet"
+      },
+      {
+        "name": "שערים לאתרי בניה",
+        "url": "/services/gates"
+      }
     ]
   },
   {
@@ -222,9 +247,18 @@
       }
     ],
     "related_services": [
-      { "name": "גדר רשת זמנית", "url": "/services/reshet" },
-      { "name": "מעברי הולכי רגל", "url": "/services/passages" },
-      { "name": "שילוט בטיחות", "url": "/services/signage" }
+      {
+        "name": "גדר רשת זמנית",
+        "url": "/services/reshet"
+      },
+      {
+        "name": "מעברי הולכי רגל",
+        "url": "/services/passages"
+      },
+      {
+        "name": "שילוט בטיחות",
+        "url": "/services/signage"
+      }
     ]
   },
   {
@@ -291,13 +325,28 @@
       }
     ],
     "related_services": [
-      { "name": "שילוט בטיחות", "url": "/services/signage" },
-      { "name": "מעברי הולכי רגל", "url": "/services/passages" },
-      { "name": "שערים לאתרי בניה", "url": "/services/gates" }
+      {
+        "name": "שילוט בטיחות",
+        "url": "/services/signage"
+      },
+      {
+        "name": "מעברי הולכי רגל",
+        "url": "/services/passages"
+      },
+      {
+        "name": "שערים לאתרי בניה",
+        "url": "/services/gates"
+      }
     ],
     "sources": [
-      { "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)", "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)" },
-      { "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה", "url": "https://www.osh.org.il/heb/Prof/bniya1/" }
+      {
+        "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)",
+        "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)"
+      },
+      {
+        "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה",
+        "url": "https://www.osh.org.il/heb/Prof/bniya1/"
+      }
     ]
   },
   {
@@ -373,9 +422,18 @@
       }
     ],
     "related_services": [
-      { "name": "גידור איסכורית", "url": "/services/iskurit" },
-      { "name": "מיתוג גדרות", "url": "/services/branding" },
-      { "name": "שילוט בטיחות", "url": "/services/signage" }
+      {
+        "name": "גידור איסכורית",
+        "url": "/services/iskurit"
+      },
+      {
+        "name": "מיתוג גדרות",
+        "url": "/services/branding"
+      },
+      {
+        "name": "שילוט בטיחות",
+        "url": "/services/signage"
+      }
     ]
   },
   {
@@ -442,13 +500,28 @@
       }
     ],
     "related_services": [
-      { "name": "שילוט בטיחות", "url": "/services/signage" },
-      { "name": "מיתוג גדרות", "url": "/services/branding" },
-      { "name": "מעברי הולכי רגל", "url": "/services/passages" }
+      {
+        "name": "שילוט בטיחות",
+        "url": "/services/signage"
+      },
+      {
+        "name": "מיתוג גדרות",
+        "url": "/services/branding"
+      },
+      {
+        "name": "מעברי הולכי רגל",
+        "url": "/services/passages"
+      }
     ],
     "sources": [
-      { "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)", "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)" },
-      { "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה", "url": "https://www.osh.org.il/heb/Prof/bniya1/" }
+      {
+        "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)",
+        "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)"
+      },
+      {
+        "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה",
+        "url": "https://www.osh.org.il/heb/Prof/bniya1/"
+      }
     ]
   },
   {
@@ -530,14 +603,32 @@
       }
     ],
     "related_services": [
-      { "name": "גידור איסכורית", "url": "/services/iskurit" },
-      { "name": "שערים לאתרי בניה", "url": "/services/gates" },
-      { "name": "שילוט בטיחות", "url": "/services/signage" }
+      {
+        "name": "גידור איסכורית",
+        "url": "/services/iskurit"
+      },
+      {
+        "name": "שערים לאתרי בניה",
+        "url": "/services/gates"
+      },
+      {
+        "name": "שילוט בטיחות",
+        "url": "/services/signage"
+      }
     ],
     "sources": [
-      { "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)", "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)" },
-      { "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה", "url": "https://www.osh.org.il/heb/Prof/bniya1/" },
-      { "name": "כל-זכות — בטיחות בעבודה", "url": "https://www.kolzchut.org.il/he/בטיחות_בעבודה" }
+      {
+        "name": "תקנות הבטיחות בעבודה (עבודות בניה), התשמ״ח–1988 — נוסח מלא (ויקיטקסט)",
+        "url": "https://he.wikisource.org/wiki/תקנות_הבטיחות_בעבודה_(עבודות_בניה)"
+      },
+      {
+        "name": "המוסד לבטיחות ולגיהות — בטיחות בעבודות בנייה",
+        "url": "https://www.osh.org.il/heb/Prof/bniya1/"
+      },
+      {
+        "name": "כל-זכות — בטיחות בעבודה",
+        "url": "https://www.kolzchut.org.il/he/בטיחות_בעבודה"
+      }
     ]
   }
 ]
