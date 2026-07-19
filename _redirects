@@ -1,41 +1,42 @@
 # Netlify redirects: consolidate .html duplicates to clean canonical URLs
-/index.html                 /                          301!
-/services/index.html        /services/                 301!
-/services/iskurit.html      /services/iskurit          301!
-/services/panel.html        /services/panel            301!
-/services/reshet.html       /services/reshet           301!
-/services/gates.html        /services/gates            301!
-/services/passages.html     /services/passages         301!
-/services/tree-protection.html/services/tree-protection  301!
-/services/branding.html     /services/branding         301!
-/services/signage.html      /services/signage          301!
-/service-areas/index.html   /service-areas/            301!
-/service-areas/tel-aviv.html/service-areas/tel-aviv    301!
-/service-areas/jerusalem.html/service-areas/jerusalem   301!
-/service-areas/haifa.html   /service-areas/haifa       301!
-/service-areas/rishon-lezion.html/service-areas/rishon-lezion301!
-/service-areas/petah-tikva.html/service-areas/petah-tikva 301!
-/service-areas/ashdod.html  /service-areas/ashdod      301!
-/service-areas/netanya.html /service-areas/netanya     301!
-/service-areas/beer-sheva.html/service-areas/beer-sheva  301!
-/service-areas/bnei-brak.html/service-areas/bnei-brak   301!
-/service-areas/holon.html   /service-areas/holon       301!
-/service-areas/ramat-gan.html/service-areas/ramat-gan   301!
-/service-areas/rehovot.html /service-areas/rehovot     301!
-/service-areas/bat-yam.html /service-areas/bat-yam     301!
-/service-areas/ashkelon.html/service-areas/ashkelon    301!
-/service-areas/herzliya.html/service-areas/herzliya    301!
-/service-areas/kfar-saba.html/service-areas/kfar-saba   301!
-/service-areas/hadera.html  /service-areas/hadera      301!
-/service-areas/modiin.html  /service-areas/modiin      301!
-/service-areas/raanana.html /service-areas/raanana     301!
-/service-areas/bet-shemesh.html/service-areas/bet-shemesh 301!
-/blog/index.html            /blog/                     301!
-/blog/iskurit-vs-panel.html /blog/iskurit-vs-panel     301!
-/blog/gidur-price-guide.html/blog/gidur-price-guide    301!
-/blog/temporary-mesh-fence.html/blog/temporary-mesh-fence 301!
-/blog/fencing-standards-safety.html/blog/fencing-standards-safety301!
-/privacy-policy.html        /privacy-policy            301!
-/privacy.html               /privacy-policy            301!
-/terms-of-use.html          /terms-of-use              301!
-/accessibility.html         /accessibility             301!
+/index.html                         /                           301!
+/services/index.html                /services/                  301!
+/services/iskurit.html              /services/iskurit           301!
+/services/panel.html                /services/panel             301!
+/services/reshet.html               /services/reshet            301!
+/services/temporary-fencing.html    /services/temporary-fencing 301!
+/services/gates.html                /services/gates             301!
+/services/passages.html             /services/passages          301!
+/services/tree-protection.html      /services/tree-protection   301!
+/services/branding.html             /services/branding          301!
+/services/signage.html              /services/signage           301!
+/service-areas/index.html           /service-areas/             301!
+/service-areas/tel-aviv.html        /service-areas/tel-aviv     301!
+/service-areas/jerusalem.html       /service-areas/jerusalem    301!
+/service-areas/haifa.html           /service-areas/haifa        301!
+/service-areas/rishon-lezion.html   /service-areas/rishon-lezion 301!
+/service-areas/petah-tikva.html     /service-areas/petah-tikva  301!
+/service-areas/ashdod.html          /service-areas/ashdod       301!
+/service-areas/netanya.html         /service-areas/netanya      301!
+/service-areas/beer-sheva.html      /service-areas/beer-sheva   301!
+/service-areas/bnei-brak.html       /service-areas/bnei-brak    301!
+/service-areas/holon.html           /service-areas/holon        301!
+/service-areas/ramat-gan.html       /service-areas/ramat-gan    301!
+/service-areas/rehovot.html         /service-areas/rehovot      301!
+/service-areas/bat-yam.html         /service-areas/bat-yam      301!
+/service-areas/ashkelon.html        /service-areas/ashkelon     301!
+/service-areas/herzliya.html        /service-areas/herzliya     301!
+/service-areas/kfar-saba.html       /service-areas/kfar-saba    301!
+/service-areas/hadera.html          /service-areas/hadera       301!
+/service-areas/modiin.html          /service-areas/modiin       301!
+/service-areas/raanana.html         /service-areas/raanana      301!
+/service-areas/bet-shemesh.html     /service-areas/bet-shemesh  301!
+/blog/index.html                    /blog/                      301!
+/blog/iskurit-vs-panel.html         /blog/iskurit-vs-panel      301!
+/blog/gidur-price-guide.html        /blog/gidur-price-guide     301!
+/blog/temporary-mesh-fence.html     /blog/temporary-mesh-fence  301!
+/blog/fencing-standards-safety.html /blog/fencing-standards-safety 301!
+/privacy-policy.html                /privacy-policy             301!
+/privacy.html                       /privacy-policy             301!
+/terms-of-use.html                  /terms-of-use               301!
+/accessibility.html                 /accessibility              301!
