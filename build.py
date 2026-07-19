@@ -20,6 +20,37 @@ def service_url(filename: str) -> str:
     return f"/services/{name}"
 
 
+# ---------- Shared content blocks (tables, figures) ----------
+def _render_table(table, indent=8):
+    """Render a styled data table. table = {"headers": [...], "rows": [[...], ...]}"""
+    pad = " " * indent
+    inner = pad + "    "
+    parts = [f'{pad}<div class="table-wrap">', f'{inner}<table class="article-table">']
+    headers = table.get("headers", [])
+    if headers:
+        parts.append(f'{inner}    <thead><tr>' + "".join(f"<th>{h}</th>" for h in headers) + "</tr></thead>")
+    parts.append(f'{inner}    <tbody>')
+    for row in table.get("rows", []):
+        parts.append(f'{inner}        <tr>' + "".join(f"<td>{c}</td>" for c in row) + "</tr>")
+    parts.append(f'{inner}    </tbody>')
+    parts.append(f'{inner}</table>')
+    parts.append(f'{pad}</div>')
+    return "\n".join(parts)
+
+
+def _render_figure(image, indent=8):
+    """Render a content image. image = {"src", "alt", "title"?, "caption"?}"""
+    pad = " " * indent
+    title = image.get("title", image["alt"])
+    caption = image.get("caption")
+    parts = [f'{pad}<figure class="article-figure">',
+             f'{pad}    <img src="{image["src"]}" alt="{image["alt"]}" title="{title}" loading="lazy" decoding="async">']
+    if caption:
+        parts.append(f'{pad}    <figcaption>{caption}</figcaption>')
+    parts.append(f'{pad}</figure>')
+    return "\n".join(parts)
+
+
 # ---------- City page content blocks (enriched local content) ----------
 def _render_city_sections(sections, indent=8):
     pad = " " * indent
@@ -28,6 +59,15 @@ def _render_city_sections(sections, indent=8):
         html.append(f'{pad}<h2>{s["heading"]}</h2>')
         for p in s.get("paragraphs", []):
             html.append(f'{pad}<p>{p}</p>')
+        if s.get("list"):
+            html.append(f'{pad}<ul class="article-list">')
+            for it in s["list"]:
+                html.append(f'{pad}    <li><i class="fas fa-check" aria-hidden="true"></i> {it}</li>')
+            html.append(f'{pad}</ul>')
+        if s.get("table"):
+            html.append(_render_table(s["table"], indent))
+        if s.get("image"):
+            html.append(_render_figure(s["image"], indent))
     return "\n".join(html)
 
 
@@ -50,7 +90,7 @@ def _render_city_faq(faq, indent=8):
     if not faq:
         return ""
     pad = " " * indent
-    parts = [f'{pad}<h2>שאלות נפוצות — גידור אתרי בנייה</h2>', f'{pad}<div class="blog-faq">']
+    parts = [f'{pad}<h2>שאלות נפוצות: גידור אתרי בנייה</h2>', f'{pad}<div class="blog-faq">']
     for f in faq:
         parts.append(f'{pad}    <details class="blog-faq-item">')
         parts.append(f'{pad}        <summary>{f["q"]}</summary>')
@@ -238,6 +278,10 @@ def _render_article_sections(sections):
             for it in s["list"]:
                 html.append(f'                        <li><i class="fas fa-check" aria-hidden="true"></i> {it}</li>')
             html.append('                    </ul>')
+        if s.get("table"):
+            html.append(_render_table(s["table"], indent=20))
+        if s.get("image"):
+            html.append(_render_figure(s["image"], indent=20))
     return "\n".join(html)
 
 
@@ -286,7 +330,7 @@ def _post_schema(post, url):
         "description": post["excerpt"],
         "image": f"{SITE}/pictures/{post['image']}",
         "datePublished": post["date"],
-        "dateModified": post["date"],
+        "dateModified": post.get("date_modified", post["date"]),
         "author": {"@type": "Organization", "name": "מרדכי סיונוב גידור אתרי בניה", "url": f"{SITE}/"},
         "publisher": {
             "@type": "Organization",
@@ -387,7 +431,7 @@ def _build_index_content(posts):
         img = f"/pictures/{post['image']}"
         cards.append(f"""                <article class="blog-card">
                     <a href="/blog/{post['slug']}" class="blog-card-link">
-                        <div class="blog-card-image"><img src="{img}" alt="{post['image_alt']}" loading="lazy"></div>
+                        <div class="blog-card-image"><img src="{img}" alt="{post['image_alt']}" title="{post['image_alt']}" loading="lazy"></div>
                         <div class="blog-card-body">
                             <span class="blog-category-badge">{post['category']}</span>
                             <h2 class="blog-card-title">{post['title']}</h2>

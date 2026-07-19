@@ -2515,6 +2515,16 @@ textarea:focus {
 .blog-faq-answer { padding: 0 20px 16px; }
 .blog-faq-answer p { color: #555; line-height: 1.8; margin: 0; }
 
+/* Article tables and figures (shared: blog, service and city pages) */
+.table-wrap { overflow-x: auto; margin: 20px 0 26px; }
+.article-table { width: 100%; border-collapse: collapse; font-size: 0.98rem; background: #fff; }
+.article-table th { background: var(--primary-color); color: #fff; padding: 12px 14px; text-align: right; font-weight: 700; }
+.article-table td { padding: 12px 14px; border-bottom: 1px solid #e3e3e3; color: #444; line-height: 1.7; vertical-align: top; }
+.article-table tr:nth-child(even) td { background: var(--bg-light); }
+.article-figure { margin: 24px 0; }
+.article-figure img { width: 100%; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+.article-figure figcaption { font-size: 0.9rem; color: #777; margin-top: 10px; text-align: center; }
+
 /* CTA box (shared with service pages) */
 .cta-box { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #fff; border-radius: 12px; padding: 30px; margin-top: 34px; text-align: center; }
 .cta-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 8px; }
