@@ -17,7 +17,57 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <link rel="stylesheet" href="../style.css">
+    <!-- Critical CSS inlined for first paint; full stylesheet loads asynchronously -->
+    <style>
+    :root{--primary-color:#0c2d48;--secondary-color:#2e8bc0;--accent-color:#f39c12;--accent-dark:#9a5b00;--text-dark:#333333;--text-light:#f4f4f4;--white:#ffffff;--bg-light:#f9f9f9;--success-color:#27ae60}
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Heebo',sans-serif;line-height:1.6;color:var(--text-dark);direction:rtl;background-color:var(--white)}
+    a{text-decoration:none;color:inherit}
+    ul{list-style:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 30px;border-radius:5px;font-weight:bold;cursor:pointer;border:none;font-size:1rem}
+    .btn-primary{background-color:var(--accent-dark);color:var(--white);border:2px solid var(--accent-dark)}
+    .btn-secondary{background-color:transparent;color:var(--white);border:2px solid var(--white)}
+    .btn-outline{background-color:transparent;color:var(--primary-color);border:2px solid var(--primary-color);padding:10px 25px}
+    header{background-color:var(--white);box-shadow:0 2px 10px rgba(0,0,0,0.1);position:sticky;top:0;z-index:9999;padding:10px 0}
+    .header-content{display:flex;justify-content:space-between;align-items:center;gap:20px}
+    .logo{flex-shrink:0}
+    .logo img{height:120px;max-height:120px;width:auto;object-fit:contain}
+    nav{flex:1;display:flex;justify-content:center;position:relative}
+    .nav-menu{display:flex;gap:25px;align-items:center}
+    .nav-menu>li{position:relative}
+    .has-mega-dropdown{position:static}
+    .nav-menu>li>a{font-weight:500;font-size:1rem;color:var(--primary-color);padding:10px 5px;display:flex;align-items:center;gap:5px}
+    .mega-menu{position:absolute;top:100%;right:0;left:0;background:var(--white);box-shadow:0 10px 40px rgba(0,0,0,0.2);border-radius:0 0 10px 10px;padding:25px 30px;opacity:0;visibility:hidden;transform:translateY(10px);transition:all .3s ease;z-index:9999;display:flex;justify-content:center;gap:40px}
+    .has-mega-dropdown:hover .mega-menu,.has-mega-dropdown:focus-within .mega-menu{opacity:1;visibility:visible;transform:translateY(0)}
+    .header-phone{flex-shrink:0}
+    .phone-link{display:flex;align-items:center;gap:8px;background-color:var(--accent-dark);color:var(--white);padding:12px 20px;border-radius:5px;font-weight:bold}
+    .mobile-menu-btn{display:none;font-size:1.5rem;color:var(--primary-color);background:none;border:none;cursor:pointer;padding:10px}
+    .skip-link{position:absolute;top:-100px;left:50%;transform:translateX(-50%);background:var(--primary-color);color:var(--white);padding:10px 20px;z-index:10000;border-radius:0 0 8px 8px;transition:top .3s}
+    .skip-link:focus{top:0}
+    .whatsapp-float{position:fixed;width:60px;height:60px;bottom:40px;left:40px;background-color:#25d366;color:#FFF;border-radius:50px;text-align:center;font-size:30px;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:100;display:flex;align-items:center;justify-content:center}
+    .cookie-banner{position:fixed;bottom:0;left:0;right:0;background-color:var(--primary-color);color:var(--white);padding:15px 20px;z-index:10000;display:none;box-shadow:0 -4px 20px rgba(0,0,0,0.3)}
+    .cookie-banner.show{display:block}
+    .mobile-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--white);box-shadow:0 -4px 20px rgba(0,0,0,0.15);z-index:999;padding:10px 15px;gap:10px}
+    .scroll-to-top{position:fixed;bottom:40px;right:40px;width:50px;height:50px;background-color:var(--primary-color);color:var(--white);border:none;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transform:translateY(20px);z-index:99}
+    .hero{background-image:url('/pictures/hero-fence-site.jpeg');background-size:cover;background-position:center;min-height:85vh;position:relative;display:flex;align-items:center;text-align:center;color:var(--white);overflow:hidden}
+    .hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(12,45,72,0.85),rgba(12,45,72,0.7))}
+    .hero-content{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:40px 20px}
+    .hero h1{font-size:3.2rem;margin-bottom:20px;font-weight:900;line-height:1.2}
+    .section-padding{padding:80px 0}
+    .bg-light{background-color:var(--bg-light)}
+    .section-title{text-align:center;font-size:2.5rem;margin-bottom:50px;color:var(--primary-color)}
+    footer{background-color:#071e2f;color:var(--white);padding:60px 0 20px}
+    .blog-post-hero{background-size:cover;background-position:center;color:#fff;padding:80px 20px;text-align:center}
+    .blog-post-hero h1{color:#fff;font-size:2.3rem;max-width:850px;margin:0 auto 16px;line-height:1.35}
+    @media (max-width:768px){.logo img{height:80px;max-height:80px}nav{display:none;position:absolute;top:100%;right:0;left:0;background:var(--white);box-shadow:0 10px 30px rgba(0,0,0,0.1)}nav.active,.nav-menu.active{display:block}.nav-menu{flex-direction:column;padding:20px;gap:0}.nav-menu>li{border-bottom:1px solid #eee}.nav-menu>li>a{padding:15px 10px;display:block}.mega-menu{position:static;box-shadow:none;border-radius:0;padding:15px;flex-direction:column;gap:20px;display:none;opacity:1;visibility:visible;transform:none;background:var(--bg-light)}.mega-menu.mobile-open{display:flex}.has-mega-dropdown:hover .mega-menu{display:none}.header-phone{display:none}.mobile-menu-btn{display:block}.mobile-sticky-cta{display:flex}.whatsapp-float{display:none}.hero{min-height:70vh}}
+    </style>
+    <link rel="preload" href="/style.css" as="style">
+    <link rel="stylesheet" href="/style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="/style.css"></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -123,7 +173,7 @@
         <div class="container header-content">
             <div class="logo">
                 <a href="/">
-                    <img src="../logo.svg" alt="מרדכי סיונוב גידור אתרי בניה">
+                    <img src="../logo.svg" alt="מרדכי סיונוב גידור אתרי בניה" title="מרדכי סיונוב גידור אתרי בניה">
                 </a>
             </div>
             <nav aria-label="תפריט ראשי">
@@ -138,6 +188,7 @@
                                     <li><a href="/services/iskurit">גידור איסכורית</a></li>
                                     <li><a href="/services/panel">גדר פאנל</a></li>
                                     <li><a href="/services/reshet">גדר רשת</a></li>
+                                    <li><a href="/services/temporary-fencing">גידור זמני והשכרת גדרות</a></li>
                                     <li><a href="/services/gates">שערים לאתרי בניה</a></li>
                                     <li><a href="/services/passages">מעברי הולכי רגל</a></li>
                                 </ul>
@@ -229,7 +280,7 @@
             <li><i class="fas fa-check" aria-hidden="true"></i> <a href="/services/panel"><strong>גדר פאנל</strong></a> — פאנל מגולוון עמיד בפני האוויר המלוח של רצועת החוף, ומאפשר גידור מהיר של אתרים חדשים שקמים בקצב.</li>
             <li><i class="fas fa-check" aria-hidden="true"></i> <a href="/services/gates"><strong>שערים לאתרי בניה</strong></a> — שערים המסדירים כניסת ציוד כבד לאתרים הגובלים בצירי התנועה העמוסים של צומת חדרה, בלי לחסום את הכביש.</li>
         </ul>
-        <h2>שאלות נפוצות — גידור אתרי בנייה</h2>
+        <h2>שאלות נפוצות: גידור אתרי בנייה</h2>
         <div class="blog-faq">
             <details class="blog-faq-item">
                 <summary>כמה מהר אפשר להקים גדר באתר בנייה בחדרה?</summary>
@@ -304,6 +355,7 @@
                         <li><a href="/services/iskurit">גידור איסכורית</a></li>
                         <li><a href="/services/panel">גדר פאנל</a></li>
                         <li><a href="/services/reshet">גדר רשת</a></li>
+                        <li><a href="/services/temporary-fencing">גידור זמני והשכרת גדרות</a></li>
                         <li><a href="/services/gates">שערים לאתרי בניה</a></li>
                         <li><a href="/services/branding">מיתוג גדרות</a></li>
                     </ul>
