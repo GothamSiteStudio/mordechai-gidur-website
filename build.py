@@ -51,6 +51,31 @@ def _render_figure(image, indent=8):
     return "\n".join(parts)
 
 
+def _render_hero_figure(image, indent=24):
+    """Above-the-fold service hero image: explicit dimensions, high fetch priority, no lazy loading."""
+    if not image:
+        return ""
+    pad = " " * indent
+    title = image.get("title", image["alt"])
+    caption = image.get("caption")
+    dims = ""
+    if image.get("width") and image.get("height"):
+        dims = f' width="{image["width"]}" height="{image["height"]}"'
+    parts = [f'{pad}<figure class="article-figure service-hero-figure">',
+             f'{pad}    <img src="{image["src"]}" alt="{image["alt"]}" title="{title}"{dims} fetchpriority="high" decoding="async">']
+    if caption:
+        parts.append(f'{pad}    <figcaption>{caption}</figcaption>')
+    parts.append(f'{pad}</figure>')
+    return "\n".join(parts)
+
+
+def _hero_preload(src):
+    """Preload tag for the page's LCP image; empty when the page has no hero image."""
+    if not src:
+        return ""
+    return f'    <link rel="preload" as="image" href="{src}" fetchpriority="high">'
+
+
 # ---------- City page content blocks (enriched local content) ----------
 def _render_city_sections(sections, indent=8):
     pad = " " * indent
@@ -225,8 +250,13 @@ def build_service_pages():
         extra_sections = _render_city_sections(svc.get("sections", []))
         faq_block = _render_city_faq(svc.get("faq", []))
         faq_schema = _city_faq_schema(svc.get("faq", []))
+        hero_image = svc.get("hero_image")
+        hero_figure = _render_hero_figure(hero_image)
+        hero_preload = _hero_preload(hero_image["src"] if hero_image else "")
 
         replacements = {
+            "{hero_figure}": hero_figure,
+            "{hero_preload}": hero_preload,
             "{extra_sections}": extra_sections,
             "{faq_block}": faq_block,
             "{faq_schema}": faq_schema,
@@ -472,6 +502,7 @@ def build_blog():
         page = page.replace("{meta_description}", post["meta_description"])
         page = page.replace("{meta_keywords}", post["meta_keywords"])
         page = page.replace("{canonical}", url)
+        page = page.replace("{hero_preload}", _hero_preload(f"/pictures/{post['image']}"))
         page = page.replace("{schema}", _post_schema(post, url))
         page = page.replace("{content}", _build_post_content(post))
         write_file(output_dir / f"{post['slug']}.html", page)
@@ -493,6 +524,7 @@ def build_blog():
     page = page.replace("{meta_description}", "הבלוג של מרדכי סיונוב גידור אתרי בניה: מדריכים על סוגי גדרות, מחירים, בטיחות ותקנים בגידור אתרי בנייה. ידע מקצועי מהשטח.")
     page = page.replace("{meta_keywords}", "בלוג גידור, גידור אתרי בניה, גדר איסכורית, מחיר גידור, תקנים בטיחות")
     page = page.replace("{canonical}", f"{SITE}/blog/")
+    page = page.replace("{hero_preload}", "")
     page = page.replace("{schema}", schema_html)
     page = page.replace("{content}", _build_index_content(posts))
     write_file(output_dir / "index.html", page)
