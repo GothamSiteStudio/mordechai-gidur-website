@@ -15,8 +15,8 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" type="image/svg+xml" href="/logo.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <title>קבלן גידור אתרי בניה | מרדכי סיונוב - פריסה ארצית</title>
-    <meta name="description" content="קבלן גידור אתרי בניה מוביל בישראל. גדרות איסכורית, פאנל, רשת זמנית, שערים ומעברים בטוחים. ביטוח קבלני מלא, עמידה בתקנים והקמה מהירה. 050-757-5570">
+    <title>גידור אתרי בניה בפריסה ארצית | הקמה מהירה | מרדכי גידור</title>
+    <meta name="description" content="גידור אתרי בניה בכל הארץ: גדרות איסכורית, פאנל ורשת זמנית, שערים ומעברים בטוחים. ביטוח קבלני מלא, עמידה בתקנים והקמה מהירה. מרדכי גידור: 050-757-5570">
     <meta name="keywords" content="גידור אתרי בניה, קבלן גידור, גדר איסכורית, גדר פאנל, גידור זמני, שערים לאתרי בניה, מעברים בטוחים, תיחום שטח">
     
     
@@ -56,7 +56,7 @@
     .cookie-banner.show{display:block}
     .mobile-sticky-cta{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--white);box-shadow:0 -4px 20px rgba(0,0,0,0.15);z-index:999;padding:10px 15px;gap:10px}
     .scroll-to-top{position:fixed;bottom:40px;right:40px;width:50px;height:50px;background-color:var(--primary-color);color:var(--white);border:none;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transform:translateY(20px);z-index:99}
-    .hero{background-image:url('/pictures/hero-fence-site.jpeg');background-size:cover;background-position:center;min-height:85vh;position:relative;display:flex;align-items:center;text-align:center;color:var(--white);overflow:hidden}
+    .hero{background-image:url('/pictures/hero-fence-site.webp');background-size:cover;background-position:center;min-height:85vh;position:relative;display:flex;align-items:center;text-align:center;color:var(--white);overflow:hidden}
     .hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(rgba(12,45,72,0.85),rgba(12,45,72,0.7))}
     .hero-content{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:40px 20px}
     .hero h1{font-size:3.2rem;margin-bottom:20px;font-weight:900;line-height:1.2}
@@ -66,7 +66,7 @@
     footer{background-color:#071e2f;color:var(--white);padding:60px 0 20px}
     .blog-post-hero{background-size:cover;background-position:center;color:#fff;padding:80px 20px;text-align:center}
     .blog-post-hero h1{color:#fff;font-size:2.3rem;max-width:850px;margin:0 auto 16px;line-height:1.35}
-    @media (max-width:768px){.logo img{height:80px;max-height:80px}nav{display:none;position:absolute;top:100%;right:0;left:0;background:var(--white);box-shadow:0 10px 30px rgba(0,0,0,0.1)}nav.active,.nav-menu.active{display:block}.nav-menu{flex-direction:column;padding:20px;gap:0}.nav-menu>li{border-bottom:1px solid #eee}.nav-menu>li>a{padding:15px 10px;display:block}.mega-menu{position:static;box-shadow:none;border-radius:0;padding:15px;flex-direction:column;gap:20px;display:none;opacity:1;visibility:visible;transform:none;background:var(--bg-light)}.mega-menu.mobile-open{display:flex}.has-mega-dropdown:hover .mega-menu{display:none}.header-phone{display:none}.mobile-menu-btn{display:block}.mobile-sticky-cta{display:flex}.whatsapp-float{display:none}.hero{min-height:70vh}}
+    @media (max-width:768px){.logo img{height:80px;max-height:80px}nav{display:none;position:absolute;top:100%;right:0;left:0;background:var(--white);box-shadow:0 10px 30px rgba(0,0,0,0.1)}nav.active,.nav-menu.active{display:block}.nav-menu{flex-direction:column;padding:20px;gap:0}.nav-menu>li{border-bottom:1px solid #eee}.nav-menu>li>a{padding:15px 10px;display:block}.mega-menu{position:static;box-shadow:none;border-radius:0;padding:15px;flex-direction:column;gap:20px;display:none;opacity:1;visibility:visible;transform:none;background:var(--bg-light)}.mega-menu.mobile-open{display:flex}.has-mega-dropdown:hover .mega-menu{display:none}.header-phone{display:none}.mobile-menu-btn{display:block}.mobile-sticky-cta{display:flex}.whatsapp-float{display:none}.hero{min-height:70vh;background-image:url('/pictures/hero-fence-site-mobile.webp')}}
     </style>
     <link rel="preload" href="/style.css" as="style">
     <link rel="stylesheet" href="/style.css" media="print" onload="this.media='all'">
@@ -79,9 +79,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap"></noscript>
     
-    <!-- Preload LCP images for faster rendering -->
-    <link rel="preload" as="image" href="pictures/hero-fence-site.jpeg" fetchpriority="high">
-    <link rel="preload" as="image" href="pictures/service-iskurit.jpeg" fetchpriority="high">
+    <!-- Preload the responsive LCP hero image for faster rendering -->
+    <link rel="preload" as="image" href="/pictures/hero-fence-site-mobile.webp" media="(max-width: 768px)" fetchpriority="high">
+    <link rel="preload" as="image" href="/pictures/hero-fence-site.webp" media="(min-width: 769px)" fetchpriority="high">
     
     <!-- Font Awesome - loaded with media print hack to avoid render blocking, then switched to all on load -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
@@ -403,10 +403,10 @@
                 <h2 class="section-title">פתרונות הגידור שלנו</h2>
                 <p class="section-lead">פתרונות גידור מותאמים לאתרי בניה, כולל כניסות, מעברים, שילוט והגנה על עצים – עם התקנה מהירה ועמידה בדרישות הבטיחות.</p>
                 <div class="services-grid">
-                    <!-- כרטיסיית שירות 1: איסכורית - LCP image, no lazy loading -->
+                    <!-- כרטיסיית שירות 1: איסכורית -->
                     <article class="service-card">
                         <div class="service-img">
-                            <img src="pictures/service-iskurit.jpeg" alt="גדר איסכורית לאתר בניה - גדר פח אטומה" title="גדר איסכורית לאתר בניה - גדר פח אטומה" fetchpriority="high" width="391" height="220">
+                            <img src="pictures/service-iskurit.jpeg" alt="גדר איסכורית לאתר בניה - גדר פח אטומה" title="גדר איסכורית לאתר בניה - גדר פח אטומה" loading="lazy" decoding="async" width="391" height="220">
                         </div>
                         <div class="service-text">
                             <h3>גידור איסכורית</h3>
@@ -636,8 +636,8 @@
                             <li>
                                 <i class="fas fa-check-circle" aria-hidden="true"></i>
                                 <div>
-                                    <strong>מענה מהיר 24/7</strong>
-                                    <p>זמינות מלאה לתקלות ושינויים - כי אתר בניה לא מחכה</p>
+                                    <strong>מענה מהיר לאורך כל הפרויקט</strong>
+                                    <p>תגובה מהירה לתקלות ולשינויים - כי אתר בניה לא מחכה</p>
                                 </div>
                             </li>
                         </ul>

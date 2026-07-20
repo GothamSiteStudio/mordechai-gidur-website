@@ -380,7 +380,7 @@ nav {
 /* 2. HERO SECTION */
 /* ================== */
 .hero {
-    background-image: url("pictures/hero-fence-site.jpeg");
+    background-image: url("pictures/hero-fence-site.webp");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -1896,6 +1896,7 @@ textarea:focus {
     .hero {
         min-height: 70vh;
         background-attachment: scroll;
+        background-image: url("pictures/hero-fence-site-mobile.webp");
     }
 
     .faq-section {
