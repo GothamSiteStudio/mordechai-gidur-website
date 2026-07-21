@@ -149,7 +149,7 @@
                 <ul class="nav-menu">
                     <li><a href="/">דף הבית</a></li>
                     <li class="has-mega-dropdown">
-                        <a href="/#services">שירותים <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                        <a href="/services/">שירותים <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                         <div class="mega-menu">
                             <div class="mega-menu-column">
                                 <h4><i class="fas fa-fence" aria-hidden="true"></i> גידור אתרי בניה</h4>
@@ -168,12 +168,13 @@
                                     <li><a href="/services/tree-protection"><i class="fas fa-tree" aria-hidden="true"></i> הגנת עצים</a></li>
                                     <li><a href="/services/branding"><i class="fas fa-paint-brush" aria-hidden="true"></i> מיתוג גדרות</a></li>
                                     <li><a href="/services/signage"><i class="fas fa-sign" aria-hidden="true"></i> שילוט בטיחות</a></li>
+                                    <li><a href="/services/"><i class="fas fa-th-list" aria-hidden="true"></i> כל שירותי הגידור</a></li>
                                 </ul>
                             </div>
                         </div>
                     </li>
                     <li class="has-mega-dropdown">
-                        <a href="/#areas">אזורי שירות <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                        <a href="/service-areas/">אזורי שירות <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                         <div class="mega-menu mega-menu-areas">
                             <div class="mega-menu-column">
                                 <h4><i class="fas fa-map-marker-alt" aria-hidden="true"></i> גוש דן והמרכז</h4>
@@ -213,6 +214,7 @@
                                 <ul>
                                     <li><a href="/service-areas/jerusalem">ירושלים</a></li>
                                     <li><a href="/service-areas/haifa">חיפה</a></li>
+                                    <li><a href="/service-areas/">כל אזורי השירות</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -223,6 +225,26 @@
             </nav>
         </div>
     </header>
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="ניווט משני">
+        <div class="container">
+            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="/"><span itemprop="name">דף הבית</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="/service-areas/"><span itemprop="name">אזורי שירות</span></a>
+                    <meta itemprop="position" content="2" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span itemprop="name">{city_name}</span>
+                    <meta itemprop="position" content="3" />
+                </li>
+            </ol>
+        </div>
+    </nav>
 
     <section class="hero">
         <h1>קבלן גידור אתרי בניה ב{city_name}</h1>
@@ -237,8 +259,11 @@
         <p>{unique_paragraph_2}</p>
 {extra_sections}
 {recommended_block}
+{nearby_cities}
+{related_posts}
 {faq_block}
 {cta_block}
+{helpful_links}
     </section>
     </main>
 
@@ -294,6 +319,7 @@
                         <li><a href="/services/temporary-fencing">גידור זמני והשכרת גדרות</a></li>
                         <li><a href="/services/gates">שערים לאתרי בניה</a></li>
                         <li><a href="/services/branding">מיתוג גדרות</a></li>
+                        <li><a href="/services/">כל השירותים</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -304,6 +330,7 @@
                         <li><a href="/service-areas/haifa">חיפה</a></li>
                         <li><a href="/service-areas/ashdod">אשדוד</a></li>
                         <li><a href="/service-areas/beer-sheva">באר שבע</a></li>
+                        <li><a href="/service-areas/">כל אזורי השירות</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">

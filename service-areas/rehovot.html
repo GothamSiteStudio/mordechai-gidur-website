@@ -180,7 +180,7 @@
                 <ul class="nav-menu">
                     <li><a href="/">דף הבית</a></li>
                     <li class="has-mega-dropdown">
-                        <a href="/#services">שירותים <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                        <a href="/services/">שירותים <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                         <div class="mega-menu">
                             <div class="mega-menu-column">
                                 <h4><i class="fas fa-fence" aria-hidden="true"></i> גידור אתרי בניה</h4>
@@ -199,12 +199,13 @@
                                     <li><a href="/services/tree-protection"><i class="fas fa-tree" aria-hidden="true"></i> הגנת עצים</a></li>
                                     <li><a href="/services/branding"><i class="fas fa-paint-brush" aria-hidden="true"></i> מיתוג גדרות</a></li>
                                     <li><a href="/services/signage"><i class="fas fa-sign" aria-hidden="true"></i> שילוט בטיחות</a></li>
+                                    <li><a href="/services/"><i class="fas fa-th-list" aria-hidden="true"></i> כל שירותי הגידור</a></li>
                                 </ul>
                             </div>
                         </div>
                     </li>
                     <li class="has-mega-dropdown">
-                        <a href="/#areas">אזורי שירות <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
+                        <a href="/service-areas/">אזורי שירות <i class="fas fa-chevron-down" aria-hidden="true"></i></a>
                         <div class="mega-menu mega-menu-areas">
                             <div class="mega-menu-column">
                                 <h4><i class="fas fa-map-marker-alt" aria-hidden="true"></i> גוש דן והמרכז</h4>
@@ -244,6 +245,7 @@
                                 <ul>
                                     <li><a href="/service-areas/jerusalem">ירושלים</a></li>
                                     <li><a href="/service-areas/haifa">חיפה</a></li>
+                                    <li><a href="/service-areas/">כל אזורי השירות</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -254,6 +256,26 @@
             </nav>
         </div>
     </header>
+
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="ניווט משני">
+        <div class="container">
+            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="/"><span itemprop="name">דף הבית</span></a>
+                    <meta itemprop="position" content="1" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a itemprop="item" href="/service-areas/"><span itemprop="name">אזורי שירות</span></a>
+                    <meta itemprop="position" content="2" />
+                </li>
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span itemprop="name">רחובות</span>
+                    <meta itemprop="position" content="3" />
+                </li>
+            </ol>
+        </div>
+    </nav>
 
     <section class="hero">
         <h1>קבלן גידור אתרי בניה ברחובות</h1>
@@ -272,12 +294,28 @@
         <h2>התמודדות עם צפיפות תנועה וקרבה למוסדות</h2>
         <p>רחוב הרצל, רחוב יעקב ואזורי המרכז ההיסטורי צפופים ורוויי תנועת הולכי רגל ורכב. באתרים הגובלים במדרכות פעילות אנו מקימים מעברי הולכי רגל מגודרים ומקורים המפרידים בבירור בין תחום העבודה לציבור, בהתאם לדרישות הבטיחות. סמוך לבתי ספר, גני ילדים ומוסדות אקדמיים אנו מקפידים על גדרות אטומות ויציבות ושילוט בטיחות ברור בעברית ובאנגלית.</p>
         <h2>לוחות זמנים וזמינות ארצית</h2>
-        <p>הצוותים שלנו פרוסים בכל הארץ וזמינים גם להקמות דחופות ברחובות ובכל אזור השפלה. ההקמה מהירה, ובמרבית האתרים ניתן לסגור היקף גידור בפרק זמן קצר לאחר תיאום. אנו עובדים עם ביטוח קבלני מלא ומקפידים על עמידה בתקנים ובדרישות הבטיחות של הוועדה המקומית לתכנון ובנייה בעיר.</p>
+        <p>הצוותים שלנו פרוסים בכל הארץ וזמינים גם להקמות דחופות ברחובות ובכל אזור השפלה. ההקמה מהירה, ובמרבית האתרים ניתן לסגור היקף גידור בפרק זמן קצר לאחר תיאום. אנו עובדים עם ביטוח קבלני מלא ומקפידים על <a href="/blog/fencing-standards-safety">עמידה בתקנים</a> ובדרישות הבטיחות של הוועדה המקומית לתכנון ובנייה בעיר.</p>
         <h2>שירותי הגידור המומלצים ברחובות</h2>
         <ul class="article-list">
             <li><i class="fas fa-check" aria-hidden="true"></i> <a href="/services/panel"><strong>גדר פאנל</strong></a> — מתאימה לאתרי ההיי-טק ופארק המדע: חסימת אבק, חיץ ויזואלי מסודר ומראה מוקפד סמוך למוסדות.</li>
             <li><i class="fas fa-check" aria-hidden="true"></i> <a href="/services/iskurit"><strong>גידור איסכורית</strong></a> — פתרון יציב וחסכוני לחזיתות הארוכות בשכונות המגורים החדשות בדרום ובמזרח רחובות.</li>
             <li><i class="fas fa-check" aria-hidden="true"></i> <a href="/services/passages"><strong>מעברי הולכי רגל</strong></a> — חיוני באתרים הגובלים במדרכות הצפופות של מרכז העיר וסמוך למוסדות חינוך.</li>
+        </ul>
+        <h2>אזורי שירות נוספים בסביבת רחובות</h2>
+        <p>הצוותים שלנו עובדים גם ביישובים הסמוכים, ולעיתים קרובות באותו שבוע עבודה. אם הפרויקט שלכם מתפרס על יותר מאתר אחד, נשמח לתאם גידור לכולם יחד:</p>
+        <ul class="article-list">
+            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <a href="/service-areas/rishon-lezion">גידור אתרי בנייה בראשון לציון</a> — השפלה</li>
+            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <a href="/service-areas/bat-yam">גידור אתרי בנייה בבת ים</a> — גוש דן</li>
+            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <a href="/service-areas/ashkelon">גידור אתרי בנייה באשקלון</a> — הדרום</li>
+            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <a href="/service-areas/herzliya">גידור אתרי בנייה בהרצליה</a> — השרון</li>
+            <li><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <a href="/service-areas/kfar-saba">גידור אתרי בנייה בכפר סבא</a> — השרון</li>
+        </ul>
+        <h2>מדריכים שיעזרו לכם לבחור</h2>
+        <p>ריכזנו בבלוג מדריכים מקצועיים שמסבירים איך בוחרים גדר, מה עולה גידור אתר ומה מחייבות התקנות. שווה לקרוא לפני שסוגרים ספק:</p>
+        <ul class="article-list">
+            <li><i class="fas fa-book-open" aria-hidden="true"></i> <a href="/blog/safety-signage-construction">שילוט בטיחות לאתרי בנייה: מה נדרש ולמה זה חשוב</a> — כ-5 דקות קריאה</li>
+            <li><i class="fas fa-book-open" aria-hidden="true"></i> <a href="/blog/construction-fencing-law">חובת גידור אתר בנייה: מה מחייבות תקנות הבטיחות בישראל</a> — כ-7 דקות קריאה</li>
+            <li><i class="fas fa-book-open" aria-hidden="true"></i> <a href="/blog/iskurit-vs-panel">גדר איסכורית או גדר פאנל? המדריך המלא לבחירת גידור לאתר הבנייה</a> — כ-6 דקות קריאה</li>
         </ul>
         <h2>שאלות נפוצות: גידור אתרי בנייה</h2>
         <div class="blog-faq">
@@ -302,6 +340,12 @@
                             <a href="https://wa.me/972507575570" class="btn btn-secondary-dark" target="_blank"><i class="fab fa-whatsapp" aria-hidden="true"></i> וואטסאפ</a>
                         </div>
                     </div>
+        <h2>קישורים שימושיים</h2>
+        <p>לפני שמזמינים גידור ברחובות כדאי להשוות בין הפתרונות ולוודא שהאתר עומד בדרישות. שלושת העמודים האלה מרכזים את כל מה שצריך:</p>
+        <ul class="article-list">
+            <li><i class="fas fa-link" aria-hidden="true"></i> <a href="/services/">כל שירותי הגידור שלנו</a> — איסכורית, פאנל, רשת, שערים, מעברים, מיתוג ושילוט</li>
+            <li><i class="fas fa-link" aria-hidden="true"></i> <a href="/blog/">הבלוג — מדריכים ומידע מקצועי</a> — מחירים, תקנים, בטיחות ובחירת סוג גדר</li>
+        </ul>
     </section>
     </main>
 
@@ -357,6 +401,7 @@
                         <li><a href="/services/temporary-fencing">גידור זמני והשכרת גדרות</a></li>
                         <li><a href="/services/gates">שערים לאתרי בניה</a></li>
                         <li><a href="/services/branding">מיתוג גדרות</a></li>
+                        <li><a href="/services/">כל השירותים</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">
@@ -367,6 +412,7 @@
                         <li><a href="/service-areas/haifa">חיפה</a></li>
                         <li><a href="/service-areas/ashdod">אשדוד</a></li>
                         <li><a href="/service-areas/beer-sheva">באר שבע</a></li>
+                        <li><a href="/service-areas/">כל אזורי השירות</a></li>
                     </ul>
                 </div>
                 <div class="footer-column">

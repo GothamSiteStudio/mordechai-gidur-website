@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 
@@ -18,6 +19,148 @@ def service_url(filename: str) -> str:
     """Clean, root-relative URL for a service page (no .html). e.g. iskurit.html -> /services/iskurit"""
     name = filename[:-5] if filename.endswith(".html") else filename
     return f"/services/{name}"
+
+
+def city_url(filename: str) -> str:
+    """Clean, root-relative URL for a city page (no .html). e.g. tel-aviv.html -> /service-areas/tel-aviv"""
+    name = filename[:-5] if filename.endswith(".html") else filename
+    return f"/service-areas/{name}"
+
+
+def post_url(slug: str) -> str:
+    """Clean, root-relative URL for a blog post (no .html)."""
+    return f"/blog/{slug}"
+
+
+# ---------- Contextual internal auto-linking ----------
+# The first mention of a topic inside real body prose becomes a descriptive link to that
+# topic's page. Deliberately conservative: never inside an existing <a>, never inside a
+# heading/summary/caption, never inside a tag or attribute, at most one link per target
+# per page and at most AUTOLINK_LIMIT links added per page.
+_HEB = "א-ת"
+AUTOLINK_LIMIT = 5
+
+LINK_TOPICS = [
+    ("/services/iskurit", ["גדר איסכורית", "גדרות איסכורית", "גידור איסכורית", "גדר פח", "איסכורית"]),
+    ("/services/panel", ["גדר פאנל", "גדרות פאנל", "גידור פאנל", "פאנלים מודולריים"]),
+    ("/services/reshet", ["גדר רשת", "גדרות רשת"]),
+    ("/services/temporary-fencing", ["השכרת גדרות", "השכרת גדר", "גידור זמני", "גדר זמנית"]),
+    ("/services/gates", ["שערים לאתרי בנייה", "שערים לאתרי בניה", "שערי הזזה", "שער הזזה",
+                         "מחסום זרוע", "שערים"]),
+    ("/services/passages", ["מעברי הולכי רגל", "מעבר להולכי רגל", "מעברים בטוחים",
+                            "מעבר מקורה", "מנהרת מעבר"]),
+    ("/services/tree-protection", ["הגנת עצים", "הגנה על עצים", "כלובי הגנה", "כלוב הגנה"]),
+    ("/services/branding", ["מיתוג גדרות", "מיתוג הגדר", "מיתוג גדר", "חיפוי יוטה"]),
+    ("/services/signage", ["שילוט בטיחות", "שילוט אזהרה", "שלטי אזהרה", "שילוט תקני", "שילוט"]),
+    ("/blog/gidur-price-guide", ["כמה עולה גידור", "עלות הגידור", "מחיר הגידור",
+                                 "מחירי הגידור", "מחירי גידור", "עלויות הגידור"]),
+    ("/blog/construction-fencing-law", ["תקנות הבטיחות בעבודה", "תקנות הבטיחות",
+                                        "חובת הגידור", "חובת גידור", "דרישות החוק"]),
+    ("/blog/fencing-standards-safety", ["תקני הבטיחות", "תקני בטיחות", "עמידה בתקנים",
+                                        "התקנים הישראליים"]),
+    ("/blog/safety-signage-construction", ["שילוט חובה", "שלטי בטיחות"]),
+    ("/blog/temporary-mesh-fence", ["גדר רשת זמנית", "גדרות רשת ניידות"]),
+    ("/blog/iskurit-vs-panel", ["איסכורית או פאנל", "בחירת סוג הגדר"]),
+]
+
+_AUTOLINK_SKIP_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6", "summary", "th", "figcaption")
+_TAG_RE = re.compile(r"<[^>]*>")
+
+
+def _autolink_text(text, patterns, added, limit):
+    """Link the first eligible mention inside one plain-text node."""
+    if not text.strip():
+        return text
+    out = ""
+    cursor = 0
+    while len(added) < limit:
+        best = None
+        for url, pat in patterns.items():
+            if url in added:
+                continue
+            m = pat.search(text, cursor)
+            if m is None:
+                continue
+            if (best is None or m.start() < best[0].start()
+                    or (m.start() == best[0].start() and len(m.group(0)) > len(best[0].group(0)))):
+                best = (m, url)
+        if best is None:
+            break
+        m, url = best
+        out += text[cursor:m.start()] + f'<a href="{url}">{m.group(0)}</a>'
+        cursor = m.end()
+        added.append(url)
+    return out + text[cursor:]
+
+
+_HREF_RE = re.compile(r'<a\b[^>]*?href\s*=\s*"([^"#?]*)', re.I)
+
+
+def existing_links(*html_blocks):
+    """Internal hrefs already present in the given HTML — so we never link the same
+    target twice on one page (some JSON prose already carries hand-written links)."""
+    found = set()
+    for block in html_blocks:
+        if block:
+            found.update(h.rstrip("/") or "/" for h in _HREF_RE.findall(block) if h.startswith("/"))
+    return found
+
+
+def autolink(html: str, self_url: str = "", skip_urls=(), limit: int = AUTOLINK_LIMIT):
+    """Add first-mention contextual links to a block of already-rendered body prose."""
+    skip = {u.rstrip("/") or "/" for u in skip_urls} | set(skip_urls)
+    skip |= existing_links(html)
+    topics = [(u, ph) for u, ph in LINK_TOPICS if u != self_url and u not in skip]
+    if not topics or limit <= 0:
+        return html
+    # The Hebrew-letter guards must wrap the WHOLE alternation, otherwise a longer
+    # alternative can match mid-word (e.g. "שילוט בטיחות" inside "שילוט בטיחותי") and
+    # the anchor would cut a word in half.
+    patterns = {
+        url: re.compile(f"(?<![{_HEB}])(?:"
+                        + "|".join(re.escape(p) for p in sorted(phrases, key=len, reverse=True))
+                        + f")(?![{_HEB}])")
+        for url, phrases in topics
+    }
+
+    parts = []
+    added = []
+    a_depth = 0
+    skip_depth = 0
+    pos = 0
+    for m in _TAG_RE.finditer(html):
+        chunk = html[pos:m.start()]
+        parts.append(_autolink_text(chunk, patterns, added, limit)
+                     if (a_depth == 0 and skip_depth == 0) else chunk)
+        tag = m.group(0)
+        parts.append(tag)
+        name = re.match(r"</?\s*([a-zA-Z0-9]+)", tag)
+        if name and not tag.endswith("/>"):
+            n = name.group(1).lower()
+            closing = tag.startswith("</")
+            if n == "a":
+                a_depth = max(0, a_depth + (-1 if closing else 1))
+            elif n in _AUTOLINK_SKIP_TAGS:
+                skip_depth = max(0, skip_depth + (-1 if closing else 1))
+        pos = m.end()
+    tail = html[pos:]
+    parts.append(_autolink_text(tail, patterns, added, limit)
+                 if (a_depth == 0 and skip_depth == 0) else tail)
+    return "".join(parts)
+
+
+def _render_link_list(links, indent=8, icon="fas fa-link"):
+    """links = [{"url", "label", "note"?}] -> styled <ul class="article-list">."""
+    if not links:
+        return ""
+    pad = " " * indent
+    parts = [f'{pad}<ul class="article-list">']
+    for link in links:
+        note = f' — {link["note"]}' if link.get("note") else ""
+        parts.append(f'{pad}    <li><i class="{icon}" aria-hidden="true"></i> '
+                     f'<a href="{link["url"]}">{link["label"]}</a>{note}</li>')
+    parts.append(f"{pad}</ul>")
+    return "\n".join(parts)
 
 
 # ---------- Shared content blocks (tables, figures) ----------
@@ -143,26 +286,118 @@ def _city_faq_schema(faq):
             + "\n    </script>")
 
 
+def _nearby_cities(pages, index, count=5):
+    """Cities to cross-link from the page at `index`: same region first, then a stable
+    round-robin over the rest so every city receives a comparable number of inbound links."""
+    page = pages[index]
+    picked = [p for i, p in enumerate(pages)
+              if i != index and p["region"] == page["region"]][:count]
+    picked_names = {p["filename"] for p in picked}
+    step = 1
+    while len(picked) < count and step < len(pages):
+        cand = pages[(index + step) % len(pages)]
+        if cand["filename"] != page["filename"] and cand["filename"] not in picked_names:
+            picked.append(cand)
+            picked_names.add(cand["filename"])
+        step += 1
+    return picked[:count]
+
+
+def _render_nearby_cities(pages, index, indent=8):
+    page = pages[index]
+    near = _nearby_cities(pages, index)
+    if not near:
+        return ""
+    pad = " " * indent
+    same_region = any(c["region"] == page["region"] for c in near)
+    if same_region:
+        heading = f'אזורי שירות נוספים בסביבת {page["city_name"]}'
+        lead = ('הצוותים שלנו עובדים גם ביישובים הסמוכים, ולעיתים קרובות באותו שבוע עבודה. '
+                'אם הפרויקט שלכם מתפרס על יותר מאתר אחד, נשמח לתאם גידור לכולם יחד:')
+    else:
+        heading = "אזורי שירות נוספים ברחבי הארץ"
+        lead = (f'מעבר ל{page["city_name"]} אנחנו מגדרים אתרי בנייה בכל הארץ. '
+                'אם יש לכם פרויקטים נוספים ביישובים אחרים, אפשר לתאם את כולם מול אותו צוות:')
+    links = [{"url": city_url(c["filename"]),
+              "label": f'גידור אתרי בנייה ב{c["city_name"]}',
+              "note": c["region"]} for c in near]
+    return (f"{pad}<h2>{heading}</h2>\n{pad}<p>{lead}</p>\n"
+            + _render_link_list(links, indent, icon="fas fa-map-marker-alt"))
+
+
+def _render_city_related_posts(posts, index, count=3, indent=8):
+    """Three guides per city page, rotated so all posts get inbound links."""
+    if not posts:
+        return ""
+    pad = " " * indent
+    chosen = [posts[(index * count + k) % len(posts)] for k in range(min(count, len(posts)))]
+    links = [{"url": post_url(p["slug"]), "label": p["title"], "note": p["read_time"]}
+             for p in chosen]
+    return (f'{pad}<h2>מדריכים שיעזרו לכם לבחור</h2>\n'
+            f'{pad}<p>ריכזנו בבלוג מדריכים מקצועיים שמסבירים איך בוחרים גדר, מה עולה גידור אתר '
+            f'ומה מחייבות התקנות. שווה לקרוא לפני שסוגרים ספק:</p>\n'
+            + _render_link_list(links, indent, icon="fas fa-book-open"))
+
+
+def _render_city_helpful_links(city_name, indent=8):
+    # NB: /service-areas/ is deliberately absent — the breadcrumb at the top of every
+    # city page already links it, and we keep to one link per target per page.
+    pad = " " * indent
+    links = [
+        {"url": "/services/", "label": "כל שירותי הגידור שלנו",
+         "note": "איסכורית, פאנל, רשת, שערים, מעברים, מיתוג ושילוט"},
+        {"url": "/blog/", "label": "הבלוג — מדריכים ומידע מקצועי",
+         "note": "מחירים, תקנים, בטיחות ובחירת סוג גדר"},
+    ]
+    return (f'{pad}<h2>קישורים שימושיים</h2>\n'
+            f'{pad}<p>לפני שמזמינים גידור ב{city_name} כדאי להשוות בין הפתרונות ולוודא '
+            f'שהאתר עומד בדרישות. שלושת העמודים האלה מרכזים את כל מה שצריך:</p>\n'
+            + _render_link_list(links, indent))
+
+
 # ---------- City pages ----------
 def build_city_pages():
     pages = read_json("data.json")
+    posts = sorted(read_json("data_blog.json"), key=lambda p: p["date"], reverse=True)
     template = Path("template_city.html").read_text(encoding="utf-8")
     output_dir = Path("service-areas")
     output_dir.mkdir(exist_ok=True)
 
-    for page in pages:
+    for index, page in enumerate(pages):
         canonical = f"{SITE}/service-areas/{page['filename'][:-5]}"
         faq = page.get("faq", [])
+        recommended = page.get("recommended", [])
         extra_sections = _render_city_sections(page.get("sections", []))
-        recommended_block = _render_city_recommended(page.get("recommended", []), page["city_name"])
+        recommended_block = _render_city_recommended(recommended, page["city_name"])
         faq_block = _render_city_faq(faq)
         faq_schema = _city_faq_schema(faq)
+        nearby_cities = _render_nearby_cities(pages, index)
+        related_posts = _render_city_related_posts(posts, index)
+        helpful_links = _render_city_helpful_links(page["city_name"])
+        # Keep to one link per target per page: anything the curated blocks on this page
+        # already link must not be auto-linked again in the prose.
+        curated = existing_links(recommended_block, nearby_cities, related_posts,
+                                 helpful_links, faq_block)
         # Only show the CTA once the page actually has enriched content below the intro.
         cta_block = CTA_BOX if (page.get("sections") or faq) else ""
+
+        # Contextual first-mention links across the page's own prose (intro + sections).
+        prose = autolink(
+            f'<p>{page["unique_paragraph_1"]}</p>\n<p>{page["unique_paragraph_2"]}</p>\n'
+            + extra_sections,
+            skip_urls=curated,
+        )
+        para_1, rest = prose.split("</p>\n", 1)
+        para_2, extra_sections = rest.split("</p>\n", 1)
+        unique_paragraph_1 = para_1[3:]
+        unique_paragraph_2 = para_2[3:]
 
         new_content = template
         new_content = new_content.replace("{extra_sections}", extra_sections)
         new_content = new_content.replace("{recommended_block}", recommended_block)
+        new_content = new_content.replace("{nearby_cities}", nearby_cities)
+        new_content = new_content.replace("{related_posts}", related_posts)
+        new_content = new_content.replace("{helpful_links}", helpful_links)
         new_content = new_content.replace("{faq_block}", faq_block)
         new_content = new_content.replace("{cta_block}", cta_block)
         new_content = new_content.replace("{faq_schema}", faq_schema)
@@ -170,8 +405,8 @@ def build_city_pages():
         new_content = new_content.replace("{city_name}", page["city_name"])
         new_content = new_content.replace("{region}", page["region"])
         new_content = new_content.replace("{seo_desc_start}", page["seo_desc_start"])
-        new_content = new_content.replace("{unique_paragraph_1}", page["unique_paragraph_1"])
-        new_content = new_content.replace("{unique_paragraph_2}", page["unique_paragraph_2"])
+        new_content = new_content.replace("{unique_paragraph_1}", unique_paragraph_1)
+        new_content = new_content.replace("{unique_paragraph_2}", unique_paragraph_2)
 
         filename = output_dir / page["filename"]
         write_file(filename, new_content)
@@ -227,8 +462,27 @@ def _render_related(items, indent=0):
     return "\n".join(cards)
 
 
+def _render_service_city_links(svc, cities, index, per_service=10, indent=16):
+    """Service -> city cross-links, rotated so all 20 cities are covered across the services."""
+    if not cities:
+        return ""
+    pad = " " * indent
+    offset = (index * per_service) % len(cities)
+    chosen = [cities[(offset + k) % len(cities)] for k in range(min(per_service, len(cities)))]
+    name = svc["service_name"]
+    links = [{"url": city_url(c["filename"]), "label": f'{name} ב{c["city_name"]}',
+              "note": c["region"]} for c in chosen]
+    return f"""{pad}<h2 class="section-title">{name} בכל רחבי הארץ</h2>
+{pad}<p>אנחנו מספקים {name} לאתרי בנייה בפריסה ארצית, עם צוותי התקנה שמגיעים לאתר בהתראה קצרה.
+{pad}    אלה חלק מהיישובים שבהם אנחנו עובדים באופן שוטף:</p>
+{_render_link_list(links, indent, icon="fas fa-map-marker-alt")}
+{pad}<p>לא מצאתם את היישוב שלכם? ריכזנו את הרשימה המלאה בעמוד <a href="/service-areas/">אזורי השירות</a>,
+{pad}    ולמידע מקצועי לפני קבלת החלטה כדאי לעיין ב<a href="/blog/">בלוג המקצועי</a> שלנו.</p>"""
+
+
 def build_service_pages():
     services = read_json("data_services.json")
+    cities = read_json("data.json")
     template = Path("template_service.html").read_text(encoding="utf-8")
     output_dir = Path("services")
     output_dir.mkdir(exist_ok=True)
@@ -237,7 +491,7 @@ def build_service_pages():
     secondary_menu = [s for s in services if s.get("menu_group") != "primary"]
     footer_services = services[:6]
 
-    for svc in services:
+    for svc_index, svc in enumerate(services):
         menu_primary_links = _render_links(primary_menu, indent=32)
         menu_secondary_links = _render_links(secondary_menu, indent=32)
         benefits_list = _render_benefits(svc["benefits"], indent=24)
@@ -253,8 +507,23 @@ def build_service_pages():
         hero_image = svc.get("hero_image")
         hero_figure = _render_hero_figure(hero_image)
         hero_preload = _hero_preload(hero_image["src"] if hero_image else "")
+        city_links = _render_service_city_links(svc, cities, svc_index)
+
+        # One link per target per page: skip the page itself and whatever the curated
+        # blocks on this page (related cards, city links, FAQ) already link to.
+        self_url = service_url(svc["filename"])
+        curated = existing_links(related_cards, city_links, faq_block) | {"/services/"}
+        prose = autolink(
+            f'<p>{svc["intro_paragraph"]}</p>\n<p>{svc["uses_intro"]}</p>\n' + extra_sections,
+            self_url=self_url, skip_urls=curated,
+        )
+        para_1, rest = prose.split("</p>\n", 1)
+        para_2, extra_sections = rest.split("</p>\n", 1)
+        intro_paragraph = para_1[3:]
+        uses_intro = para_2[3:]
 
         replacements = {
+            "{city_links}": city_links,
             "{hero_figure}": hero_figure,
             "{hero_preload}": hero_preload,
             "{extra_sections}": extra_sections,
@@ -269,11 +538,11 @@ def build_service_pages():
             "{hero_title}": svc["hero_title"],
             "{hero_subtitle}": svc["hero_subtitle"],
             "{intro_heading}": svc["intro_heading"],
-            "{intro_paragraph}": svc["intro_paragraph"],
+            "{intro_paragraph}": intro_paragraph,
             "{benefits_heading}": svc["benefits_heading"],
             "{benefits_list}": benefits_list,
             "{uses_heading}": svc["uses_heading"],
-            "{uses_intro}": svc["uses_intro"],
+            "{uses_intro}": uses_intro,
             "{uses_list}": uses_list,
             "{specs_heading}": svc["specs_heading"],
             "{spec_rows}": spec_rows,
@@ -398,11 +667,55 @@ CTA_BOX = """                    <div class="cta-box">
                     </div>"""
 
 
-def _build_post_content(post):
-    sections = _render_article_sections(post["sections"])
+def _render_post_city_sidebar(cities, index, count=4):
+    """Blog post -> city cross-links, rotated so the posts spread across the city cluster."""
+    if not cities:
+        return ""
+    chosen = [cities[(index * count + k) % len(cities)] for k in range(min(count, len(cities)))]
+    links = "\n".join(
+        f'                            <li><a href="{city_url(c["filename"])}">'
+        f'גידור אתרי בנייה ב{c["city_name"]}</a></li>' for c in chosen
+    )
+    return f"""                    <div class="sidebar-box">
+                        <h4>אזורי שירות</h4>
+                        <ul class="sidebar-links">
+{links}
+                            <li><a href="/service-areas/">כל אזורי השירות בארץ</a></li>
+                        </ul>
+                    </div>
+"""
+
+
+def _render_post_related_posts(posts, index, count=3):
+    """Related-articles module — the site had none, so every post sat at ~1 inbound link."""
+    if len(posts) < 2:
+        return ""
+    chosen = [posts[(index + k) % len(posts)] for k in range(1, min(count, len(posts) - 1) + 1)]
+    links = "\n".join(
+        f'                            <li><a href="{post_url(p["slug"])}">{p["title"]}</a></li>'
+        for p in chosen
+    )
+    return f"""                    <div class="sidebar-box">
+                        <h4>מאמרים נוספים בבלוג</h4>
+                        <ul class="sidebar-links">
+{links}
+                        </ul>
+                    </div>
+"""
+
+
+def _build_post_content(post, posts=None, cities=None, index=0):
+    posts = posts or [post]
+    cities = cities or []
+    self_url = post_url(post["slug"])
     faq = _render_faq(post.get("faq"))
     sources = _render_sources(post.get("sources"))
     related = _render_related_sidebar(post["related_services"])
+    city_box = _render_post_city_sidebar(cities, index)
+    posts_box = _render_post_related_posts(posts, index)
+    curated = existing_links(related, city_box, posts_box, faq)
+    sections = autolink(_render_article_sections(post["sections"]),
+                        self_url=self_url, skip_urls=curated)
     img = f"/pictures/{post['image']}"
     return f"""        <nav class="breadcrumbs" aria-label="ניווט משני">
             <div class="container">
@@ -440,9 +753,10 @@ def _build_post_content(post):
                         <h4>שירותים רלוונטיים</h4>
                         <ul class="sidebar-links">
 {related}
+                            <li><a href="/services/">כל שירותי הגידור</a></li>
                         </ul>
                     </div>
-                    <div class="sidebar-box sidebar-contact">
+{posts_box}{city_box}                    <div class="sidebar-box sidebar-contact">
                         <h4>שיחת ייעוץ חינם</h4>
                         <p><i class="fas fa-phone" aria-hidden="true"></i> <a href="tel:0507575570">050-757-5570</a></p>
                         <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:m0507575570@gmail.com">m0507575570@gmail.com</a></p>
@@ -471,6 +785,16 @@ def _build_index_content(posts):
                     </a>
                 </article>""")
     cards_html = "\n".join(cards)
+    helpful = _render_link_list([
+        {"url": "/services/", "label": "כל שירותי הגידור לאתרי בנייה",
+         "note": "איסכורית, פאנל, רשת, שערים, מעברים, מיתוג ושילוט"},
+        {"url": "/service-areas/", "label": "אזורי השירות שלנו בכל הארץ",
+         "note": "רשימת היישובים שבהם אנחנו פועלים"},
+        {"url": "/services/iskurit", "label": "גידור איסכורית",
+         "note": "הפתרון הנפוץ ביותר לתיחום אטום של אתר בנייה"},
+        {"url": "/services/temporary-fencing", "label": "גידור זמני והשכרת גדרות",
+         "note": "אספקה, התקנה ופירוק לכל תקופת הפרויקט"},
+    ], indent=16)
     return f"""        <section class="blog-index-hero">
             <div class="container">
                 <h1>הבלוג של מרדכי סיונוב גידור</h1>
@@ -484,18 +808,28 @@ def _build_index_content(posts):
 {cards_html}
                 </div>
             </div>
+        </section>
+
+        <section class="section-padding">
+            <div class="container">
+                <h2 class="section-title">קישורים שימושיים</h2>
+                <p>קראתם את המדריכים ואתם מוכנים להתקדם? אלה העמודים שיעזרו לכם לבחור את סוג הגדר
+                    ולבדוק שאנחנו פועלים גם באזור הפרויקט שלכם:</p>
+{helpful}
+            </div>
         </section>"""
 
 
 def build_blog():
     posts = read_json("data_blog.json")
     posts = sorted(posts, key=lambda p: p["date"], reverse=True)
+    cities = read_json("data.json")
     template = Path("template_blog.html").read_text(encoding="utf-8")
     output_dir = Path("blog")
     output_dir.mkdir(exist_ok=True)
 
     # Individual posts
-    for post in posts:
+    for index, post in enumerate(posts):
         url = f"{SITE}/blog/{post['slug']}"
         page = template
         page = page.replace("{meta_title}", post["meta_title"])
@@ -504,7 +838,7 @@ def build_blog():
         page = page.replace("{canonical}", url)
         page = page.replace("{hero_preload}", _hero_preload(f"/pictures/{post['image']}"))
         page = page.replace("{schema}", _post_schema(post, url))
-        page = page.replace("{content}", _build_post_content(post))
+        page = page.replace("{content}", _build_post_content(post, posts, cities, index))
         write_file(output_dir / f"{post['slug']}.html", page)
         print(f"Created blog post: blog/{post['slug']}.html")
 
