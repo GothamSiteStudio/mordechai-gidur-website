@@ -97,7 +97,7 @@ _HREF_RE = re.compile(r'<a\b[^>]*?href\s*=\s*"([^"#?]*)', re.I)
 
 
 def existing_links(*html_blocks):
-    """Internal hrefs already present in the given HTML — so we never link the same
+    """Internal hrefs already present in the given HTML, so we never link the same
     target twice on one page (some JSON prose already carries hand-written links)."""
     found = set()
     for block in html_blocks:
@@ -156,7 +156,7 @@ def _render_link_list(links, indent=8, icon="fas fa-link"):
     pad = " " * indent
     parts = [f'{pad}<ul class="article-list">']
     for link in links:
-        note = f' — {link["note"]}' if link.get("note") else ""
+        note = f' · {link["note"]}' if link.get("note") else ""
         parts.append(f'{pad}    <li><i class="{icon}" aria-hidden="true"></i> '
                      f'<a href="{link["url"]}">{link["label"]}</a>{note}</li>')
     parts.append(f"{pad}</ul>")
@@ -248,7 +248,7 @@ def _render_city_recommended(recommended, city_name, indent=8):
     for r in recommended:
         parts.append(
             f'{pad}    <li><i class="fas fa-check" aria-hidden="true"></i> '
-            f'<a href="{service_url(r["filename"])}"><strong>{r["label"]}</strong></a> — {r["reason"]}</li>'
+            f'<a href="{service_url(r["filename"])}"><strong>{r["label"]}</strong></a> · {r["reason"]}</li>'
         )
     parts.append(f'{pad}</ul>')
     return "\n".join(parts)
@@ -340,13 +340,13 @@ def _render_city_related_posts(posts, index, count=3, indent=8):
 
 
 def _render_city_helpful_links(city_name, indent=8):
-    # NB: /service-areas/ is deliberately absent — the breadcrumb at the top of every
+    # NB: /service-areas/ is deliberately absent, the breadcrumb at the top of every
     # city page already links it, and we keep to one link per target per page.
     pad = " " * indent
     links = [
         {"url": "/services/", "label": "כל שירותי הגידור שלנו",
          "note": "איסכורית, פאנל, רשת, שערים, מעברים, מיתוג ושילוט"},
-        {"url": "/blog/", "label": "הבלוג — מדריכים ומידע מקצועי",
+        {"url": "/blog/", "label": "הבלוג: מדריכים ומידע מקצועי",
          "note": "מחירים, תקנים, בטיחות ובחירת סוג גדר"},
     ]
     return (f'{pad}<h2>קישורים שימושיים</h2>\n'
@@ -506,6 +506,7 @@ def build_service_pages():
         faq_schema = _city_faq_schema(svc.get("faq", []))
         hero_image = svc.get("hero_image")
         hero_figure = _render_hero_figure(hero_image)
+        top_cta = _render_top_cta(svc.get("cta_top"), indent=24).rstrip("\n")
         hero_preload = _hero_preload(hero_image["src"] if hero_image else "")
         city_links = _render_service_city_links(svc, cities, svc_index)
 
@@ -525,6 +526,7 @@ def build_service_pages():
         replacements = {
             "{city_links}": city_links,
             "{hero_figure}": hero_figure,
+            "{top_cta}": top_cta,
             "{hero_preload}": hero_preload,
             "{extra_sections}": extra_sections,
             "{faq_block}": faq_block,
@@ -630,10 +632,10 @@ def _post_schema(post, url):
         "image": f"{SITE}/pictures/{post['image']}",
         "datePublished": post["date"],
         "dateModified": post.get("date_modified", post["date"]),
-        "author": {"@type": "Organization", "name": "מרדכי סיונוב גידור אתרי בניה", "url": f"{SITE}/"},
+        "author": {"@type": "Organization", "name": "מרדכי גידור אתרי בניה", "url": f"{SITE}/"},
         "publisher": {
             "@type": "Organization",
-            "name": "מרדכי סיונוב גידור אתרי בניה",
+            "name": "מרדכי גידור אתרי בניה",
             "logo": {"@type": "ImageObject", "url": f"{SITE}/logo.svg"},
         },
         "mainEntityOfPage": url,
@@ -667,6 +669,24 @@ CTA_BOX = """                    <div class="cta-box">
                     </div>"""
 
 
+def _render_top_cta(cta, indent=20):
+    """Above-the-fold quote-request box. cta = {"heading", "text"}; empty when absent.
+    Same markup and classes as the closing CTA, only placed before the body copy."""
+    if not cta:
+        return ""
+    pad = " " * indent
+    inner = pad + "    "
+    return f"""{pad}<div class="cta-box cta-box-top">
+{inner}<h3>{cta["heading"]}</h3>
+{inner}<p>{cta["text"]}</p>
+{inner}<div class="cta-buttons">
+{inner}    <a href="tel:0507575570" class="btn btn-primary"><i class="fas fa-phone-alt" aria-hidden="true"></i> 050-757-5570</a>
+{inner}    <a href="https://wa.me/972507575570" class="btn btn-secondary-dark" target="_blank"><i class="fab fa-whatsapp" aria-hidden="true"></i> וואטסאפ</a>
+{inner}</div>
+{pad}</div>
+"""
+
+
 def _render_post_city_sidebar(cities, index, count=4):
     """Blog post -> city cross-links, rotated so the posts spread across the city cluster."""
     if not cities:
@@ -687,7 +707,7 @@ def _render_post_city_sidebar(cities, index, count=4):
 
 
 def _render_post_related_posts(posts, index, count=3):
-    """Related-articles module — the site had none, so every post sat at ~1 inbound link."""
+    """Related-articles module. The site had none, so every post sat at ~1 inbound link."""
     if len(posts) < 2:
         return ""
     chosen = [posts[(index + k) % len(posts)] for k in range(1, min(count, len(posts) - 1) + 1)]
@@ -713,6 +733,7 @@ def _build_post_content(post, posts=None, cities=None, index=0):
     related = _render_related_sidebar(post["related_services"])
     city_box = _render_post_city_sidebar(cities, index)
     posts_box = _render_post_related_posts(posts, index)
+    top_cta = _render_top_cta(post.get("cta_top"))
     curated = existing_links(related, city_box, posts_box, faq)
     sections = autolink(_render_article_sections(post["sections"]),
                         self_url=self_url, skip_urls=curated)
@@ -742,7 +763,7 @@ def _build_post_content(post, posts=None, cities=None, index=0):
             <div class="container blog-article-layout">
                 <article class="article-body">
                     <p class="article-lead">{post["excerpt"]}</p>
-{sections}
+{top_cta}{sections}
 {faq}
 {sources}
 {CTA_BOX}
@@ -786,19 +807,23 @@ def _build_index_content(posts):
                 </article>""")
     cards_html = "\n".join(cards)
     helpful = _render_link_list([
+        # The index itself picks up impressions for "גידור איסכורית"; this hands that
+        # intent straight to the post that owns the term instead of holding it here.
+        {"url": "/blog/iskurit-vs-panel", "label": "גידור איסכורית מול גדר פאנל",
+         "note": "המדריך המלא להשוואה ולבחירת סוג הגדר"},
         {"url": "/services/", "label": "כל שירותי הגידור לאתרי בנייה",
          "note": "איסכורית, פאנל, רשת, שערים, מעברים, מיתוג ושילוט"},
         {"url": "/service-areas/", "label": "אזורי השירות שלנו בכל הארץ",
          "note": "רשימת היישובים שבהם אנחנו פועלים"},
-        {"url": "/services/iskurit", "label": "גידור איסכורית",
-         "note": "הפתרון הנפוץ ביותר לתיחום אטום של אתר בנייה"},
+        {"url": "/services/iskurit", "label": "התקנת גדר איסכורית לאתר בנייה",
+         "note": "אספקה, התקנה, מפרט טכני וגורמי מחיר"},
         {"url": "/services/temporary-fencing", "label": "גידור זמני והשכרת גדרות",
          "note": "אספקה, התקנה ופירוק לכל תקופת הפרויקט"},
     ], indent=16)
     return f"""        <section class="blog-index-hero">
             <div class="container">
-                <h1>הבלוג של מרדכי סיונוב גידור</h1>
-                <p>מדריכים, טיפים ומידע מקצועי על גידור אתרי בנייה — סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט.</p>
+                <h1>הבלוג של מרדכי גידור</h1>
+                <p>מדריכים, טיפים ומידע מקצועי על גידור אתרי בנייה: סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט.</p>
             </div>
         </section>
 
@@ -846,7 +871,7 @@ def build_blog():
     index_schema = {
         "@context": "https://schema.org",
         "@type": "Blog",
-        "name": "הבלוג של מרדכי סיונוב גידור אתרי בניה",
+        "name": "הבלוג של מרדכי גידור אתרי בניה",
         "url": f"{SITE}/blog/",
     }
     import json as _json
@@ -854,8 +879,8 @@ def build_blog():
                    + _json.dumps(index_schema, ensure_ascii=False, indent=4).replace("\n", "\n    ")
                    + "\n    </script>")
     page = template
-    page = page.replace("{meta_title}", "בלוג גידור אתרי בנייה — מדריכים וטיפים | מרדכי סיונוב")
-    page = page.replace("{meta_description}", "הבלוג של מרדכי סיונוב גידור אתרי בניה: מדריכים על סוגי גדרות, מחירים, בטיחות ותקנים בגידור אתרי בנייה. ידע מקצועי מהשטח.")
+    page = page.replace("{meta_title}", "בלוג גידור אתרי בנייה: מדריכים וטיפים | מרדכי גידור")
+    page = page.replace("{meta_description}", "הבלוג של מרדכי גידור אתרי בניה: מדריכים על סוגי גדרות, מחירים, בטיחות ותקנים בגידור אתרי בנייה. ידע מקצועי מהשטח.")
     page = page.replace("{meta_keywords}", "בלוג גידור, גידור אתרי בניה, גדר איסכורית, מחיר גידור, תקנים בטיחות")
     page = page.replace("{canonical}", f"{SITE}/blog/")
     page = page.replace("{hero_preload}", "")

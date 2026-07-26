@@ -2530,6 +2530,9 @@ textarea:focus {
 .cta-box { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: #fff; border-radius: 12px; padding: 30px; margin-top: 34px; text-align: center; }
 .cta-box h3 { color: #fff; font-size: 1.4rem; margin-bottom: 8px; }
 .cta-box p { color: rgba(255,255,255,0.9); margin-bottom: 18px; }
+/* Above-the-fold variant: sits between the lead and the body copy, so it needs less
+   top space and a clear gap below it. */
+.cta-box-top { margin-top: 22px; margin-bottom: 28px; padding: 24px 30px; }
 .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* Buttons (shared additions) */
