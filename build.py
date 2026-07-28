@@ -807,6 +807,12 @@ def _build_index_content(posts):
                 </article>""")
     cards_html = "\n".join(cards)
     helpful = _render_link_list([
+        # The index outranks the homepage on the site's own head term: "גידור אתרי בנייה"
+        # lands here at pos 18.67 (82 imp) while / sits at 28.52 (31 imp). An editorial
+        # archive is the wrong page for that intent, so the head term is handed to /
+        # with an exact-match anchor instead of being held by this list.
+        {"url": "/", "label": "גידור אתרי בנייה בפריסה ארצית",
+         "note": "הזמנת גידור לאתר, הצעת מחיר וכל השירותים במקום אחד"},
         # The index itself picks up impressions for "גידור איסכורית"; this hands that
         # intent straight to the post that owns the term instead of holding it here.
         {"url": "/blog/iskurit-vs-panel", "label": "גידור איסכורית מול גדר פאנל",
@@ -823,7 +829,7 @@ def _build_index_content(posts):
     return f"""        <section class="blog-index-hero">
             <div class="container">
                 <h1>הבלוג של מרדכי גידור</h1>
-                <p>מדריכים, טיפים ומידע מקצועי על גידור אתרי בנייה: סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט.</p>
+                <p>מדריכים, טיפים ומידע מקצועי מהשטח: סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט. מחפשים קבלן לפרויקט עצמו? <a href="/">גידור אתרי בנייה</a> בפריסה ארצית.</p>
             </div>
         </section>
 
@@ -879,9 +885,11 @@ def build_blog():
                    + _json.dumps(index_schema, ensure_ascii=False, indent=4).replace("\n", "\n    ")
                    + "\n    </script>")
     page = template
-    page = page.replace("{meta_title}", "בלוג גידור אתרי בנייה: מדריכים וטיפים | מרדכי גידור")
-    page = page.replace("{meta_description}", "הבלוג של מרדכי גידור אתרי בניה: מדריכים על סוגי גדרות, מחירים, בטיחות ותקנים בגידור אתרי בנייה. ידע מקצועי מהשטח.")
-    page = page.replace("{meta_keywords}", "בלוג גידור, גידור אתרי בניה, גדר איסכורית, מחיר גידור, תקנים בטיחות")
+    # Editorial framing on purpose: the bare service head term belongs to the homepage,
+    # not to an article archive. See the helpful-links comment in _build_index_content.
+    page = page.replace("{meta_title}", "מדריכים לבחירת גדר לאתר בנייה: תקנים ומחירים | מרדכי גידור")
+    page = page.replace("{meta_description}", "כל המדריכים במקום אחד: איך בוחרים סוג גדר, מה משפיע על העלות, אילו תקני בטיחות חלים ומה דורש החוק באתרי בנייה. ידע מקצועי מהשטח.")
+    page = page.replace("{meta_keywords}", "בלוג גידור, מדריכי גידור, גדר איסכורית, מחיר גידור, תקנים בטיחות")
     page = page.replace("{canonical}", f"{SITE}/blog/")
     page = page.replace("{hero_preload}", "")
     page = page.replace("{schema}", schema_html)
