@@ -1,0 +1,50 @@
+# Cache + security headers.
+# Syntax is identical on Netlify and Cloudflare Pages, so this file works
+# before and after the migration with no changes.
+#
+# HTML is deliberately left on the platform default (max-age=0, must-revalidate)
+# so content/SEO edits go live immediately.
+
+# --- Non-fingerprinted CSS/JS: short cache + long stale-while-revalidate ---
+# These filenames never change, so we cannot use immutable. 1h + SWR keeps
+# repeat visits fast while still propagating an edit within the hour.
+/style.css
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/accessibility.js
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# --- Images and icons: rarely change, safe to cache hard ---
+/logo.svg
+  Cache-Control: public, max-age=2592000
+/favicon.ico
+  Cache-Control: public, max-age=2592000
+/favicon-32x32.png
+  Cache-Control: public, max-age=2592000
+/apple-touch-icon.png
+  Cache-Control: public, max-age=2592000
+/pictures/*
+  Cache-Control: public, max-age=2592000
+/images/*
+  Cache-Control: public, max-age=2592000
+
+# --- Build sources served publicly from the repo root: keep them out of the index ---
+# noindex via header rather than robots.txt Disallow, so we do not advertise them.
+/build.py
+  X-Robots-Tag: noindex
+/data.json
+  X-Robots-Tag: noindex
+/data_blog.json
+  X-Robots-Tag: noindex
+/data_services.json
+  X-Robots-Tag: noindex
+/report.json
+  X-Robots-Tag: noindex
+/SEO-Report-2026-06.md
+  X-Robots-Tag: noindex
+/SEO-site-health-report-2026-07-12.md
+  X-Robots-Tag: noindex
+
+# --- Baseline security headers (safe: no CSP, so GTM/Matomo are unaffected) ---
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
