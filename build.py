@@ -41,7 +41,7 @@ _HEB = "א-ת"
 AUTOLINK_LIMIT = 5
 
 LINK_TOPICS = [
-    ("/services/iskurit", ["גדר איסכורית", "גדרות איסכורית", "גידור איסכורית", "גדר פח", "איסכורית"]),
+    ("/services/iskurit", ["גדר איסכורית", "גדרות איסכורית", "גידור איסכורית", "איסכורית"]),
     ("/services/panel", ["גדר פאנל", "גדרות פאנל", "גידור פאנל", "פאנלים מודולריים"]),
     ("/services/reshet", ["גדר רשת", "גדרות רשת"]),
     ("/services/temporary-fencing", ["השכרת גדרות", "השכרת גדר", "גידור זמני", "גדר זמנית"]),
@@ -60,6 +60,15 @@ LINK_TOPICS = [
                                         "התקנים הישראליים"]),
     ("/blog/safety-signage-construction", ["שילוט חובה", "שלטי בטיחות"]),
     ("/blog/temporary-mesh-fence", ["גדר רשת זמנית", "גדרות רשת ניידות"]),
+    # "גדר פח" sat on /services/iskurit, which Google ranks 48.2 for it, while this
+    # guide ranks 8.96 on 125 impressions - the best position on the site for a real
+    # head term. One owner per head term, and it is the page Google already chose.
+    # It won no anchor on the service page either way (self_url excluded it there),
+    # so this is a latent-correctness fix: it decides where the NEXT mention points.
+    # "גדר פח איסכורית" is listed so it matches whole - without it the two owners
+    # would split one phrase into two adjacent anchors. "פח איסכורית" is deliberately
+    # NOT listed: it would hand the word איסכורית itself to this page.
+    ("/blog/metal-sheet-fence", ["גדר פח איסכורית", "גדר פח", "גדרות פח"]),
     ("/blog/iskurit-vs-panel", ["איסכורית או פאנל", "בחירת סוג הגדר"]),
 ]
 
