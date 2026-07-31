@@ -41,7 +41,7 @@ _HEB = "א-ת"
 AUTOLINK_LIMIT = 5
 
 LINK_TOPICS = [
-    ("/services/iskurit", ["גדר איסכורית", "גדרות איסכורית", "גידור איסכורית", "איסכורית"]),
+    ("/services/iskurit", ["גדרות איסכורית", "איסכורית"]),
     ("/services/panel", ["גדר פאנל", "גדרות פאנל", "גידור פאנל", "פאנלים מודולריים"]),
     ("/services/reshet", ["גדר רשת", "גדרות רשת"]),
     ("/services/temporary-fencing", ["השכרת גדרות", "השכרת גדר", "גידור זמני", "גדר זמנית"]),
@@ -69,7 +69,20 @@ LINK_TOPICS = [
     # would split one phrase into two adjacent anchors. "פח איסכורית" is deliberately
     # NOT listed: it would hand the word איסכורית itself to this page.
     ("/blog/metal-sheet-fence", ["גדר פח איסכורית", "גדר פח", "גדרות פח"]),
-    ("/blog/iskurit-vs-panel", ["איסכורית או פאנל", "בחירת סוג הגדר"]),
+    # Same move as "גדר פח" above, on the site's two biggest commercial terms.
+    # 28d GSC: "גדר איסכורית" 195 impressions - this guide holds 180 of them at
+    # position 12.97, while /services/iskurit sits at 58.5; "גידור איסכורית" 145
+    # impressions, 127 of them here at 14.43. The service page is stuck on a stale
+    # crawl (last fetched 2026-06-14, Google still holding a legacy hyphenated-domain
+    # canonical), so its ranking is not an on-page problem and anchors cannot fix it.
+    # One owner per head term, and it is the page Google already chose.
+    # The bare "איסכורית" and the plural "גדרות איסכורית" deliberately STAY on the
+    # service page: bare "איסכורית" is the commercial one-word term (32 impressions,
+    # position 37.3, all on the service page) and the plural draws none at all.
+    # Precedence is earliest match position, so "גדר איסכורית" beats the bare
+    # "איסכורית" nested inside it and no phrase splits into two adjacent anchors.
+    ("/blog/iskurit-vs-panel", ["גדר איסכורית", "גידור איסכורית",
+                                "איסכורית או פאנל", "בחירת סוג הגדר"]),
 ]
 
 _AUTOLINK_SKIP_TAGS = ("h1", "h2", "h3", "h4", "h5", "h6", "summary", "th", "figcaption")
