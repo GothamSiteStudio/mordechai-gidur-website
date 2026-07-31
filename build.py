@@ -59,6 +59,16 @@ LINK_TOPICS = [
     ("/blog/fencing-standards-safety", ["תקני הבטיחות", "תקני בטיחות", "עמידה בתקנים",
                                         "התקנים הישראליים"]),
     ("/blog/safety-signage-construction", ["שילוט חובה", "שלטי בטיחות"]),
+    # The signage cluster (~330 impressions/28d) was carried by one page. 28d GSC:
+    # "שלט באתר בניה" 47 impressions at 16.17 and "שלט לאתר בניה" 40 at 23.45, both
+    # on /blog/safety-signage-construction, while /services/signage sits at 70-75 on
+    # the same terms. This guide takes the project-sign half of the cluster (the
+    # planning-and-building requirement) so the two pages stop competing for it.
+    # None of these phrases nests inside another owner's phrase - /services/signage
+    # owns bare "שילוט" and "שילוט אזהרה", safety-signage owns "שלטי בטיחות" - so no
+    # phrase splits into two adjacent anchors.
+    ("/blog/construction-site-project-sign", ["שלט הפרויקט", "שלט אתר הבנייה",
+                                              "שלט אתר בנייה"]),
     ("/blog/temporary-mesh-fence", ["גדר רשת זמנית", "גדרות רשת ניידות"]),
     # "גדר פח" sat on /services/iskurit, which Google ranks 48.2 for it, while this
     # guide ranks 8.96 on 125 impressions - the best position on the site for a real
