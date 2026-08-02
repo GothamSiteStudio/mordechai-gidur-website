@@ -51,22 +51,38 @@ LINK_TOPICS = [
                             "מעבר מקורה", "מנהרת מעבר"]),
     ("/services/tree-protection", ["הגנת עצים", "הגנה על עצים", "כלובי הגנה", "כלוב הגנה"]),
     ("/services/branding", ["מיתוג גדרות", "מיתוג הגדר", "מיתוג גדר", "חיפוי יוטה"]),
-    ("/services/signage", ["שילוט בטיחות", "שילוט אזהרה", "שלטי אזהרה", "שילוט תקני", "שילוט"]),
+    # Bare "שילוט" moved to /blog/safety-signage-construction (see below). The three
+    # qualified phrases stay here: each starts at the same offset as the bare term, so
+    # the exact-start tie is broken by length and this page still wins them.
+    ("/services/signage", ["שילוט בטיחות", "שילוט אזהרה", "שלטי אזהרה", "שילוט תקני"]),
     ("/blog/gidur-price-guide", ["כמה עולה גידור", "עלות הגידור", "מחיר הגידור",
                                  "מחירי הגידור", "מחירי גידור", "עלויות הגידור"]),
     ("/blog/construction-fencing-law", ["תקנות הבטיחות בעבודה", "תקנות הבטיחות",
                                         "חובת הגידור", "חובת גידור", "דרישות החוק"]),
     ("/blog/fencing-standards-safety", ["תקני הבטיחות", "תקני בטיחות", "עמידה בתקנים",
                                         "התקנים הישראליים"]),
-    ("/blog/safety-signage-construction", ["שילוט חובה", "שלטי בטיחות"]),
+    # Takes the two bare head terms of the signage cluster. 28d GSC, every query where
+    # both pages surface, this page vs /services/signage:
+    #   "שילוט לאתרי בניה"  72 imp @ 28.9  vs  48 @ 67.4
+    #   "שלט באתר בניה"     47 imp @ 16.2  vs   5 @ 75.2
+    #   "שלטים לאתרי בניה"  51 imp @ 31.3  vs   4 @ 68.3
+    #   "שלט לאתר בניה"     40 imp @ 23.5  vs   3 @ 70.0
+    # ~302 impressions at 16-34 here against ~76 at 58-75 there. Bare "שילוט" matches
+    # inside "שילוט לאתרי בניה" / "שילוט על בניין" etc., so it is the term that decides
+    # where the cluster's prose mentions point - it belongs to the page Google ranks.
+    # "שלטים" added for the same reason (83 impressions on "שלטים ל..." phrasings, all
+    # landing here). "שלטי אזהרה" is unaffected: the guard is (?<![א-ת])...(?![א-ת]),
+    # so "שלטי" cannot match inside "שלטים".
+    ("/blog/safety-signage-construction", ["שילוט חובה", "שלטי בטיחות",
+                                           "שילוט", "שלטים"]),
     # The signage cluster (~330 impressions/28d) was carried by one page. 28d GSC:
     # "שלט באתר בניה" 47 impressions at 16.17 and "שלט לאתר בניה" 40 at 23.45, both
     # on /blog/safety-signage-construction, while /services/signage sits at 70-75 on
     # the same terms. This guide takes the project-sign half of the cluster (the
     # planning-and-building requirement) so the two pages stop competing for it.
     # None of these phrases nests inside another owner's phrase - /services/signage
-    # owns bare "שילוט" and "שילוט אזהרה", safety-signage owns "שלטי בטיחות" - so no
-    # phrase splits into two adjacent anchors.
+    # owns "שילוט אזהרה", safety-signage owns bare "שילוט", "שלטים" and "שלטי בטיחות"
+    # - so no phrase splits into two adjacent anchors.
     ("/blog/construction-site-project-sign", ["שלט הפרויקט", "שלט אתר הבנייה",
                                               "שלט אתר בנייה"]),
     ("/blog/temporary-mesh-fence", ["גדר רשת זמנית", "גדרות רשת ניידות"]),
