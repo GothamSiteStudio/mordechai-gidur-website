@@ -855,11 +855,12 @@ def _build_index_content(posts):
                 </article>""")
     cards_html = "\n".join(cards)
     helpful = _render_link_list([
-        # The index outranks the homepage on the site's own head term: "גידור אתרי בנייה"
-        # lands here at pos 18.67 (82 imp) while / sits at 28.52 (31 imp). An editorial
-        # archive is the wrong page for that intent, so the head term is handed to /
-        # with an exact-match anchor instead of being held by this list.
-        {"url": "/", "label": "גידור אתרי בנייה בפריסה ארצית",
+        # 40ee53f tried to hand "גידור אתרי בנייה" from this index to / with exact-match
+        # anchors. Measured a week later (28d to 2026-08-04) it did not take: the index
+        # went 18.67 -> 21.3 and / went 28.52 -> 34.8, so neither page gained. Google has
+        # picked the index for that term twice; the anchor now carries commercial intent
+        # to / without handing over the phrase this page is being ranked on.
+        {"url": "/", "label": "הזמנת קבלן גידור בפריסה ארצית",
          "note": "הזמנת גידור לאתר, הצעת מחיר וכל השירותים במקום אחד"},
         # The index itself picks up impressions for "גידור איסכורית"; this hands that
         # intent straight to the post that owns the term instead of holding it here.
@@ -876,8 +877,8 @@ def _build_index_content(posts):
     ], indent=16)
     return f"""        <section class="blog-index-hero">
             <div class="container">
-                <h1>הבלוג של מרדכי גידור</h1>
-                <p>מדריכים, טיפים ומידע מקצועי מהשטח: סוגי גדרות, בטיחות, תקנים ותכנון נכון של הפרויקט. מחפשים קבלן לפרויקט עצמו? <a href="/">גידור אתרי בנייה</a> בפריסה ארצית.</p>
+                <h1>גידור אתרי בנייה: מדריכים מהשטח</h1>
+                <p>כל מה שצריך לדעת לפני גידור אתרי בנייה, במקום אחד: איזו גדר מתאימה לפרויקט, מה משפיע על המחיר למטר, אילו תקני בטיחות חלים ומה החוק מחייב. מחפשים קבלן לפרויקט עצמו? <a href="/">הזמנת גידור לאתר הבנייה שלכם</a>.</p>
             </div>
         </section>
 
@@ -933,11 +934,14 @@ def build_blog():
                    + _json.dumps(index_schema, ensure_ascii=False, indent=4).replace("\n", "\n    ")
                    + "\n    </script>")
     page = template
-    # Editorial framing on purpose: the bare service head term belongs to the homepage,
-    # not to an article archive. See the helpful-links comment in _build_index_content.
-    page = page.replace("{meta_title}", "מדריכים לבחירת גדר לאתר בנייה: תקנים ומחירים | מרדכי גידור")
-    page = page.replace("{meta_description}", "כל המדריכים במקום אחד: איך בוחרים סוג גדר, מה משפיע על העלות, אילו תקני בטיחות חלים ומה דורש החוק באתרי בנייה. ידע מקצועי מהשטח.")
-    page = page.replace("{meta_keywords}", "בלוג גידור, מדריכי גידור, גדר איסכורית, מחיר גידור, תקנים בטיחות")
+    # Targeted at the head term this page is already favoured on: 154 of its 205
+    # query-attributed impressions (28d to 2026-08-04) are "גידור אתרי בנייה" and its
+    # spellings, at pos 20.5-21.3, ahead of the homepage on every one of them. Shape is
+    # the site's own measured winner - question, exact term first, 50-53 chars, no brand
+    # suffix; the only two pages here that click (2.05% / 1.96%) both look like this.
+    page = page.replace("{meta_title}", "גידור אתרי בנייה: איזו גדר, באיזה מחיר ולפי איזה תקן?")
+    page = page.replace("{meta_description}", "מדריכים מהשטח לגידור אתרי בנייה: איך בוחרים בין איסכורית, פאנל ורשת, מה משפיע על המחיר למטר, אילו תקני בטיחות חלים ומה החוק מחייב. 050-757-5570")
+    page = page.replace("{meta_keywords}", "גידור אתרי בנייה, גידור אתר בנייה, מדריכי גידור, מחיר גידור אתר בנייה, תקני בטיחות, גדר איסכורית")
     page = page.replace("{canonical}", f"{SITE}/blog/")
     page = page.replace("{hero_preload}", "")
     page = page.replace("{schema}", schema_html)
