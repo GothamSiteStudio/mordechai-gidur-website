@@ -41,6 +41,15 @@ _HEB = "א-ת"
 AUTOLINK_LIMIT = 5
 
 LINK_TOPICS = [
+    # The services hub had no topic of its own and drew 0 impressions in 28 days: its
+    # title was a restatement of "גידור אתרי בנייה", the term the homepage was given on
+    # 2026-07-28, so Google had no separate intent to rank it for. Meanwhile
+    # "עבודות גידור" is the site's only orphan intent - 83 impressions at 26.7 in 28d
+    # (2026-07-10..2026-08-06), 82 of them landing on the homepage, zero clicks, no page
+    # of its own. The hub is what that query is asking for, so it takes the term here
+    # too and the prose mentions stop pointing nowhere in particular.
+    # Nests with nothing: bare "גידור" is not a topic, so no phrase splits in two.
+    ("/services/", ["עבודות גידור"]),
     ("/services/iskurit", ["גדרות איסכורית", "איסכורית"]),
     ("/services/panel", ["גדר פאנל", "גדרות פאנל", "גידור פאנל", "פאנלים מודולריים"]),
     ("/services/reshet", ["גדר רשת", "גדרות רשת"]),
