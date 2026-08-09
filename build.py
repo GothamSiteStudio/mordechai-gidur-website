@@ -66,9 +66,13 @@ LINK_TOPICS = [
     ("/services/signage", ["שילוט בטיחות", "שילוט אזהרה", "שלטי אזהרה", "שילוט תקני"]),
     ("/blog/gidur-price-guide", ["כמה עולה גידור", "עלות הגידור", "מחיר הגידור",
                                  "מחירי הגידור", "מחירי גידור", "עלויות הגידור"]),
+    # Absorbed /blog/fencing-standards-safety on 2026-08-09. That page was a strict
+    # content subset of this one and drew 0 impressions in 90 days while this page drew
+    # 417 at pos 14.5; its four standards phrases now point here so the anchors keep
+    # working and stop feeding a suppressed duplicate.
     ("/blog/construction-fencing-law", ["תקנות הבטיחות בעבודה", "תקנות הבטיחות",
-                                        "חובת הגידור", "חובת גידור", "דרישות החוק"]),
-    ("/blog/fencing-standards-safety", ["תקני הבטיחות", "תקני בטיחות", "עמידה בתקנים",
+                                        "חובת הגידור", "חובת גידור", "דרישות החוק",
+                                        "תקני הבטיחות", "תקני בטיחות", "עמידה בתקנים",
                                         "התקנים הישראליים"]),
     # Takes the two bare head terms of the signage cluster. 28d GSC, every query where
     # both pages surface, this page vs /services/signage:
