@@ -42,7 +42,10 @@
 /blog/construction-fencing-law.html /blog/construction-fencing-law 301!
 /blog/metal-sheet-fence.html        /blog/metal-sheet-fence     301!
 /blog/safety-signage-construction.html /blog/safety-signage-construction 301!
-/blog/choosing-temporary-fence.html /blog/choosing-temporary-fence 301!
+# Consolidated 2026-08-13: 809-word guide, ZERO impressions in 90d, absorbed into
+# the page Google actually ranks on this cluster (581 impr/90d at pos 18.1).
+/blog/choosing-temporary-fence.html /blog/temporary-mesh-fence 301!
+/blog/choosing-temporary-fence      /blog/temporary-mesh-fence 301!
 /privacy-policy.html                /privacy-policy             301!
 /privacy.html                       /privacy-policy             301!
 /privacy                            /privacy-policy             301!
