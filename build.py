@@ -801,10 +801,19 @@ def _build_post_content(post, posts=None, cities=None, index=0):
     img = f"/pictures/{post['image']}"
     return f"""        <nav class="breadcrumbs" aria-label="ניווט משני">
             <div class="container">
-                <ol>
-                    <li><a href="/">דף הבית</a></li>
-                    <li><a href="/blog/">בלוג</a></li>
-                    <li>{post["title"]}</li>
+                <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a itemprop="item" href="/"><span itemprop="name">דף הבית</span></a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a itemprop="item" href="/blog/"><span itemprop="name">בלוג</span></a>
+                        <meta itemprop="position" content="2" />
+                    </li>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <span itemprop="name">{post["title"]}</span>
+                        <meta itemprop="position" content="3" />
+                    </li>
                 </ol>
             </div>
         </nav>
