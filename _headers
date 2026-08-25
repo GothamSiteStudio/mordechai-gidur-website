@@ -41,6 +41,12 @@
   X-Robots-Tag: noindex
 /report.json
   X-Robots-Tag: noindex
+/template_blog.html
+  X-Robots-Tag: noindex
+/template_city.html
+  X-Robots-Tag: noindex
+/template_service.html
+  X-Robots-Tag: noindex
 /SEO-Report-2026-06.md
   X-Robots-Tag: noindex
 /SEO-site-health-report-2026-07-12.md

@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Build templates: unfilled placeholders, never meant to be indexed
+Disallow: /template_blog.html
+Disallow: /template_city.html
+Disallow: /template_service.html
+
 Sitemap: https://mordechaigidur.co.il/sitemap.xml
