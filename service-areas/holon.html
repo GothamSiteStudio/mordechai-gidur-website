@@ -433,6 +433,15 @@
             <div class="footer-bottom">
                 <p>&copy; 2024 מרדכי גידור אתרי בניה. כל הזכויות שמורות.</p>
                 <p class="footer-credit">נבנה על ידי <a href="https://gothamsitestudio.com/" target="_blank" rel="noopener noreferrer">Gotham Site Studio</a></p>
+                <!-- Google preferred sources: Google's own button, our button on the JS API, and the Search settings deeplink -->
+                <div class="preferred-source" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;font-size:0.85rem;padding:0 12px;box-sizing:border-box;">
+                  <span>הפכו את מרדכי גידור אתרי בניה למקור מועדף בגוגל:</span>
+                  <div style="width:100%;max-width:250px;"><div google-add-preferred-source-btn data-theme="dark" data-lang="he"></div></div>
+                  <button type="button" class="js-preferred-source" data-preferred-source-url="https://www.google.com/preferences/source?q=mordechaigidur.co.il" style="cursor:pointer;font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:6px;padding:6px 12px;">הוספה כמקור מועדף</button>
+                  <a href="https://www.google.com/preferences/source?q=mordechaigidur.co.il" target="_blank" rel="noopener">הגדרה בהגדרות החיפוש של גוגל</a>
+                </div>
+                <script async src="https://news.google.com/swg/js/v1/publisher.js"></script>
+                <script src="/preferred-source.js" defer></script>
             </div>
         </div>
     </footer>

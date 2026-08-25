@@ -12,6 +12,8 @@
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /accessibility.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/preferred-source.js
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
 # --- Images and icons: rarely change, safe to cache hard ---
 /logo.svg
