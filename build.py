@@ -13,6 +13,7 @@ def write_file(path: Path, content: str):
 
 
 SITE = "https://mordechaigidur.co.il"
+OG_IMAGE_DEFAULT = f"{SITE}/pictures/hero-fence-site.jpeg"
 
 
 def service_url(filename: str) -> str:
@@ -463,6 +464,7 @@ def build_city_pages():
         new_content = new_content.replace("{cta_block}", cta_block)
         new_content = new_content.replace("{faq_schema}", faq_schema)
         new_content = new_content.replace("{canonical}", canonical)
+        new_content = new_content.replace("{og_image}", OG_IMAGE_DEFAULT)
         new_content = new_content.replace("{city_name}", page["city_name"])
         new_content = new_content.replace("{region}", page["region"])
         new_content = new_content.replace("{seo_desc_start}", page["seo_desc_start"])
@@ -596,6 +598,8 @@ def build_service_pages():
             "{meta_description}": svc["meta_description"],
             "{meta_keywords}": svc["meta_keywords"],
             "{canonical}": svc["canonical"],
+            # og:image follows the page's own hero where it has one
+            "{og_image}": (f"{SITE}" + hero_image["src"]) if hero_image else OG_IMAGE_DEFAULT,
             "{service_name}": svc["service_name"],
             "{schema_description}": svc["schema_description"],
             "{hero_title}": svc["hero_title"],
@@ -621,7 +625,18 @@ def build_service_pages():
 
         new_content = template
         for placeholder, value in replacements.items():
+            if placeholder == "{og_image}":
+                continue
             new_content = new_content.replace(placeholder, value)
+
+        # og:image last, so a service with no hero_image can still share the first
+        # picture the finished page actually shows rather than the site default.
+        og_image = replacements["{og_image}"]
+        if og_image == OG_IMAGE_DEFAULT:
+            first = re.search(r'src="(?:\.\./|/)?(pictures/[^"]+\.(?:jpe?g|png|webp))"', new_content)
+            if first:
+                og_image = f"{SITE}/{first.group(1)}"
+        new_content = new_content.replace("{og_image}", og_image)
 
         filename = output_dir / svc["filename"]
         write_file(filename, new_content)
@@ -939,6 +954,7 @@ def build_blog():
         page = page.replace("{meta_keywords}", post["meta_keywords"])
         page = page.replace("{canonical}", url)
         page = page.replace("{hero_preload}", _hero_preload(f"/pictures/{post['image']}"))
+        page = page.replace("{og_image}", f"{SITE}/pictures/{post['image']}")
         page = page.replace("{schema}", _post_schema(post, url))
         page = page.replace("{content}", _build_post_content(post, posts, cities, index))
         write_file(output_dir / f"{post['slug']}.html", page)
@@ -965,6 +981,7 @@ def build_blog():
     page = page.replace("{meta_description}", "מדריכים מהשטח לגידור אתרי בנייה: איך בוחרים בין איסכורית, פאנל ורשת, מה משפיע על המחיר למטר, אילו תקני בטיחות חלים ומה החוק מחייב. 050-757-5570")
     page = page.replace("{meta_keywords}", "גידור אתרי בנייה, גידור אתר בנייה, מדריכי גידור, מחיר גידור אתר בנייה, תקני בטיחות, גדר איסכורית")
     page = page.replace("{canonical}", f"{SITE}/blog/")
+    page = page.replace("{og_image}", OG_IMAGE_DEFAULT)
     page = page.replace("{hero_preload}", "")
     page = page.replace("{schema}", schema_html)
     page = page.replace("{content}", _build_index_content(posts))
