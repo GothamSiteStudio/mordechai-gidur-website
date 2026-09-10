@@ -2144,23 +2144,30 @@ textarea:focus {
 /* ===========================================
    LEGAL PAGES - דפי מדיניות והצהרות
    =========================================== */
-.page-hero {
+/* .service-hero shares this treatment: template_service.html renders a gradient
+   hero with no background image, exactly like the legal pages, and had no rule
+   of its own in this file or in any critical-CSS block. */
+.page-hero,
+.service-hero {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     color: var(--white);
     padding: 100px 0 50px;
     text-align: center;
 }
 
-.page-hero h1 {
+.page-hero h1,
+.service-hero h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
+    line-height: 1.25;
 }
 
 .page-hero h1 i {
     margin-left: 10px;
 }
 
-.page-hero p {
+.page-hero p,
+.service-hero p {
     font-size: 1rem;
     opacity: 0.9;
 }
@@ -2429,11 +2436,13 @@ textarea:focus {
 }
 
 @media (max-width: 768px) {
-    .page-hero {
+    .page-hero,
+    .service-hero {
         padding: 80px 0 40px;
     }
 
-    .page-hero h1 {
+    .page-hero h1,
+    .service-hero h1 {
         font-size: 1.8rem;
     }
 
