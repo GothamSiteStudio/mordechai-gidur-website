@@ -112,9 +112,19 @@ LINK_TOPICS = [
     # Same move as "גדר פח" above, on the site's two biggest commercial terms.
     # 28d GSC: "גדר איסכורית" 195 impressions - this guide holds 180 of them at
     # position 12.97, while /services/iskurit sits at 58.5; "גידור איסכורית" 145
-    # impressions, 127 of them here at 14.43. The service page is stuck on a stale
-    # crawl (last fetched 2026-06-14, Google still holding a legacy hyphenated-domain
-    # canonical), so its ranking is not an on-page problem and anchors cannot fix it.
+    # impressions, 127 of them here at 14.43.
+    # CORRECTED 2026-09-11. This block used to say the service page was stuck on a
+    # stale crawl behind a legacy hyphenated-domain canonical, so anchors could not
+    # fix it. Both halves were false: URL Inspection on 2026-08-12 read lastCrawlTime
+    # 2026-07-31 and googleCanonical == userCanonical on this host, and
+    # mordechai-gidur.co.il does not resolve at all (NXDOMAIN). The service page is
+    # crawled and earning (28d to 2026-09-08: 348 impressions, 3 clicks, pos 38.2,
+    # up from 166 at 43.7). The ownership call still stands on Google's own choice
+    # (this guide 12.0 vs the service page 56.0 on "גדר איסכורית"), but neither term
+    # is buyer demand: 28d to 2026-09-08, "גדר איסכורית" 301 impressions, 89%
+    # desktop, active all 28 days, CV 0.22, 0 clicks; "גידור איסכורית" 160, 100%
+    # desktop, CV 0.21, 0 clicks. That is a rank tracker, so re-pointing these two
+    # phrases between pages moves a tracker's reading, not a customer.
     # One owner per head term, and it is the page Google already chose.
     # The bare "איסכורית" and the plural "גדרות איסכורית" deliberately STAY on the
     # service page: bare "איסכורית" is the commercial one-word term (32 impressions,
