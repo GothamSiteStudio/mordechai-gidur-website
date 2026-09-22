@@ -709,6 +709,22 @@ def _render_related_sidebar(related):
     return links
 
 
+def _business_node():
+    """The one business entity, as the homepage and all 22 city pages already declare it.
+    Articles used to mint two anonymous Organization nodes instead, so the blog tier -
+    the tier that answered the BreadcrumbList fix - named an author and a publisher
+    Google had no way to join to https://mordechaigidur.co.il/#business."""
+    return {
+        "@type": "GeneralContractor",
+        "@id": f"{SITE}/#business",
+        "name": "מרדכי גידור אתרי בניה",
+        "alternateName": "מרדכי סיונוב גידור אתרי בניה",
+        "telephone": "+972-50-757-5570",
+        "url": f"{SITE}/",
+        "logo": {"@type": "ImageObject", "url": f"{SITE}/logo.svg"},
+    }
+
+
 def _post_schema(post, url):
     blocks = [{
         "@context": "https://schema.org",
@@ -718,12 +734,8 @@ def _post_schema(post, url):
         "image": f"{SITE}/pictures/{post['image']}",
         "datePublished": post["date"],
         "dateModified": post.get("date_modified", post["date"]),
-        "author": {"@type": "Organization", "name": "מרדכי גידור אתרי בניה", "url": f"{SITE}/"},
-        "publisher": {
-            "@type": "Organization",
-            "name": "מרדכי גידור אתרי בניה",
-            "logo": {"@type": "ImageObject", "url": f"{SITE}/logo.svg"},
-        },
+        "author": _business_node(),
+        "publisher": _business_node(),
         "mainEntityOfPage": url,
     }]
     if post.get("faq"):
