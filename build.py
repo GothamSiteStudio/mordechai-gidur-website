@@ -983,11 +983,25 @@ def build_blog():
         print(f"Created blog post: blog/{post['slug']}.html")
 
     # Index
+    # The BreadcrumbList is its own node: "breadcrumb" belongs to WebPage, not Blog. Same
+    # trail the articles render as microdata (f6e9278) and the service-areas hub declares
+    # in JSON-LD (fc102d5); the archive was the one listing page with neither.
     index_schema = {
         "@context": "https://schema.org",
-        "@type": "Blog",
-        "name": "הבלוג של מרדכי גידור אתרי בניה",
-        "url": f"{SITE}/blog/",
+        "@graph": [
+            {
+                "@type": "Blog",
+                "name": "הבלוג של מרדכי גידור אתרי בניה",
+                "url": f"{SITE}/blog/",
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "דף הבית", "item": f"{SITE}/"},
+                    {"@type": "ListItem", "position": 2, "name": "בלוג"},
+                ],
+            },
+        ],
     }
     import json as _json
     schema_html = ('    <script type="application/ld+json">\n    '
