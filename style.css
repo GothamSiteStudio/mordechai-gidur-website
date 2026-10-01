@@ -2629,3 +2629,25 @@ textarea:focus {
         scroll-behavior: auto !important;
     }
 }
+
+/* ================== */
+/* LOCAL CORNER (homepage, owner request 2026-10-01) */
+/* ================== */
+.local-corner { border-top: 1px solid #ececec; }
+.lc-body { max-width: 900px; margin: 0 auto; }
+.lc-body h3 { color: var(--primary-color); font-size: 1.35rem; margin: 30px 0 14px; }
+.lc-body h3:first-child { margin-top: 0; }
+.lc-list { list-style: none; margin: 0 0 10px; padding: 0; }
+.lc-list li { padding: 12px 16px; margin-bottom: 10px; border-right: 4px solid #e3e3e3; background: var(--bg-light); line-height: 1.8; color: #444; overflow-wrap: anywhere; }
+.lc-list li strong { color: var(--primary-color); }
+.lc-list li.lc-now { border-right-color: var(--accent-color); background: #fff8ec; }
+.lc-body a { color: #1f6f9e; text-decoration: underline; font-weight: 600; }
+.lc-body a:hover { color: var(--primary-color); }
+.lc-cite { display: block; margin-top: 4px; font-size: 0.85rem; color: #666; }
+.lc-cite a { font-weight: 400; }
+.lc-cta { margin-top: 24px; font-size: 1.1rem; line-height: 1.8; color: #444; text-align: center; }
+.lc-live { padding: 10px 14px; border-right: 4px solid #e3e3e3; background: var(--bg-light); margin-bottom: 6px; }
+.lc-live.lc-good { border-right-color: var(--success-color); }
+.lc-live.lc-caution { border-right-color: var(--accent-color); }
+.lc-live.lc-poor { border-right-color: #c0392b; }
+.lc-src { font-size: 0.85rem; color: #666; margin-bottom: 16px; }
