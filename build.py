@@ -253,13 +253,78 @@ def _render_table(table, indent=8):
     return "\n".join(parts)
 
 
+def _webp_sibling(src: str) -> str:
+    """Root-relative .webp next to a raster, when that file exists. Otherwise empty."""
+    if not src or src.startswith(("data:", "http://", "https://")):
+        return ""
+    clean = src.split("?", 1)[0].split("#", 1)[0]
+    rel = clean.lstrip("/")
+    if not rel:
+        return ""
+    candidate = Path(rel).with_suffix(".webp")
+    if not candidate.is_file():
+        return ""
+    return ("/" if clean.startswith("/") else "") + candidate.as_posix()
+
+
+def _image_size(src: str):
+    """Pixel size of a local JPEG or PNG, so content images can reserve space. None if unknown."""
+    if not src or src.startswith(("data:", "http://", "https://")):
+        return None
+    path = Path(src.split("?", 1)[0].split("#", 1)[0].lstrip("/"))
+    if not path.is_file():
+        return None
+    data = path.read_bytes()
+    if data.startswith(b"\x89PNG\r\n\x1a\n") and len(data) >= 24:
+        import struct
+        return struct.unpack(">II", data[16:24])
+    if data[:2] != b"\xff\xd8":
+        return None
+    import struct
+    i = 2
+    while i + 9 < len(data):
+        if data[i] != 0xFF:
+            i += 1
+            continue
+        marker = data[i + 1]
+        if marker in (0xC0, 0xC1, 0xC2):
+            height, width = struct.unpack(">HH", data[i + 5:i + 9])
+            return width, height
+        if marker in (0xD8, 0xD9):
+            i += 2
+            continue
+        if i + 4 > len(data):
+            break
+        seglen = struct.unpack(">H", data[i + 2:i + 4])[0]
+        i += 2 + seglen
+    return None
+
+
+def _img_markup(src, alt, title, attrs=""):
+    """img, wrapped in picture/webp when a sibling .webp exists. The jpeg/png stays the fallback."""
+    img = f'<img src="{src}" alt="{alt}" title="{title}"{attrs}>'
+    webp = _webp_sibling(src)
+    if not webp:
+        return img
+    return f'<picture><source srcset="{webp}" type="image/webp">{img}</picture>'
+
+
 def _render_figure(image, indent=8):
     """Render a content image. image = {"src", "alt", "title"?, "caption"?}"""
     pad = " " * indent
     title = image.get("title", image["alt"])
     caption = image.get("caption")
+    dims = ""
+    if image.get("width") and image.get("height"):
+        dims = f' width="{image["width"]}" height="{image["height"]}"'
+    else:
+        size = _image_size(image["src"])
+        if size:
+            dims = f' width="{size[0]}" height="{size[1]}"'
+    img = _img_markup(image["src"], image["alt"], title,
+                      f'{dims} loading="lazy" decoding="async"')
     parts = [f'{pad}<figure class="article-figure">',
-             f'{pad}    <img src="{image["src"]}" alt="{image["alt"]}" title="{title}" loading="lazy" decoding="async">']
+             f'{pad}    {img}']
     if caption:
         parts.append(f'{pad}    <figcaption>{caption}</figcaption>')
     parts.append(f'{pad}</figure>')
@@ -276,8 +341,14 @@ def _render_hero_figure(image, indent=24):
     dims = ""
     if image.get("width") and image.get("height"):
         dims = f' width="{image["width"]}" height="{image["height"]}"'
+    else:
+        size = _image_size(image["src"])
+        if size:
+            dims = f' width="{size[0]}" height="{size[1]}"'
+    img = _img_markup(image["src"], image["alt"], title,
+                      f'{dims} fetchpriority="high" decoding="async"')
     parts = [f'{pad}<figure class="article-figure service-hero-figure">',
-             f'{pad}    <img src="{image["src"]}" alt="{image["alt"]}" title="{title}"{dims} fetchpriority="high" decoding="async">']
+             f'{pad}    {img}']
     if caption:
         parts.append(f'{pad}    <figcaption>{caption}</figcaption>')
     parts.append(f'{pad}</figure>')
@@ -285,10 +356,29 @@ def _render_hero_figure(image, indent=24):
 
 
 def _hero_preload(src):
-    """Preload tag for the page's LCP image; empty when the page has no hero image."""
+    """Preload tag for the page's LCP image; empty when the page has no hero image.
+    Prefers the webp sibling. Browsers that cannot use it still load the fallback in the page."""
     if not src:
         return ""
+    webp = _webp_sibling(src)
+    if webp:
+        return f'    <link rel="preload" as="image" href="{webp}" type="image/webp" fetchpriority="high">'
     return f'    <link rel="preload" as="image" href="{src}" fetchpriority="high">'
+
+
+def _hero_background_style(src: str) -> str:
+    """Darkened cover image. The second background-image adds webp via image-set and
+    repeats the gradient, so a browser that drops image-set keeps the jpeg declaration."""
+    gradient = "linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55))"
+    plain = f"{gradient}, url('{src}')"
+    style = f"background-image: {plain}; background-size: cover; background-position: center;"
+    webp = _webp_sibling(src)
+    if not webp:
+        return style
+    layered = (f"{gradient}, image-set(url('{webp}') type('image/webp'), "
+               f"url('{src}') type('image/jpeg'))")
+    return (f"background-image: {plain}; background-image: {layered}; "
+            f"background-size: cover; background-position: center;")
 
 
 # ---------- City page content blocks (enriched local content) ----------
@@ -536,7 +626,7 @@ def _render_related(items, indent=0):
 
 
 def _render_service_city_links(svc, cities, index, per_service=10, indent=16):
-    """Service -> city cross-links, rotated so all 20 cities are covered across the services."""
+    """Service -> city cross-links, rotated so every city page is covered across the services."""
     if not cities:
         return ""
     pad = " " * indent
@@ -710,18 +800,41 @@ def _render_related_sidebar(related):
 
 
 def _business_node():
-    """The one business entity, as the homepage and all 22 city pages already declare it.
-    Articles used to mint two anonymous Organization nodes instead, so the blog tier -
-    the tier that answered the BreadcrumbList fix - named an author and a publisher
-    Google had no way to join to https://mordechaigidur.co.il/#business."""
+    """The one business entity, referenced from the homepage, city pages and blog.
+    areaServed is exactly the cities that have a page in data.json. No opening hours
+    and no aggregateRating: neither is backed by a figure we are willing to mark up."""
+    cities = read_json("data.json")
     return {
         "@type": "GeneralContractor",
         "@id": f"{SITE}/#business",
         "name": "מרדכי גידור אתרי בניה",
         "alternateName": "מרדכי סיונוב גידור אתרי בניה",
-        "telephone": "+972-50-757-5570",
+        "description": "קבלן גידור אתרי בניה בפריסה ארצית: גדרות איסכורית, פאנל, רשת זמנית, שערים, מעברים בטוחים ושילוט. ביטוח קבלני מלא ועמידה בתקנים.",
         "url": f"{SITE}/",
+        "telephone": "+972-50-757-5570",
+        "email": "m0507575570@gmail.com",
+        "taxID": "302951967",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "הנרקיס 20",
+            "addressLocality": "טרום",
+            "postalCode": "99730",
+            "addressRegion": "מחוז ירושלים",
+            "addressCountry": "IL",
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 31.8673,
+            "longitude": 35.0521,
+        },
+        "hasMap": "https://maps.app.goo.gl/dttms77swx2Qmiqv5",
+        "areaServed": [{"@type": "City", "name": c["city_name"]} for c in cities],
+        "sameAs": [
+            "https://maps.app.goo.gl/dttms77swx2Qmiqv5",
+            "https://www.facebook.com/profile.php?id=100025245623848",
+        ],
         "logo": {"@type": "ImageObject", "url": f"{SITE}/logo.svg"},
+        "image": f"{SITE}/pictures/hero-fence-site.jpeg",
     }
 
 
@@ -836,6 +949,7 @@ def _build_post_content(post, posts=None, cities=None, index=0):
     sections = autolink(_render_article_sections(post["sections"]),
                         self_url=self_url, skip_urls=curated)
     img = f"/pictures/{post['image']}"
+    hero_style = _hero_background_style(img)
     return f"""        <nav class="breadcrumbs" aria-label="ניווט משני">
             <div class="container">
                 <ol itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -855,7 +969,7 @@ def _build_post_content(post, posts=None, cities=None, index=0):
             </div>
         </nav>
 
-        <section class="blog-post-hero" style="background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('{img}');">
+        <section class="blog-post-hero" style="{hero_style}">
             <div class="container">
                 <span class="blog-category-badge">{post["category"]}</span>
                 <h1>{post["title"]}</h1>
@@ -901,9 +1015,13 @@ def _build_index_content(posts):
     cards = []
     for post in posts:
         img = f"/pictures/{post['image']}"
+        size = _image_size(img)
+        dims = f' width="{size[0]}" height="{size[1]}"' if size else ""
+        card_img = _img_markup(img, post["image_alt"], post["image_alt"],
+                               f"{dims} loading=\"lazy\" decoding=\"async\"")
         cards.append(f"""                <article class="blog-card">
                     <a href="/blog/{post['slug']}" class="blog-card-link">
-                        <div class="blog-card-image"><img src="{img}" alt="{post['image_alt']}" title="{post['image_alt']}" loading="lazy"></div>
+                        <div class="blog-card-image">{card_img}</div>
                         <div class="blog-card-body">
                             <span class="blog-category-badge">{post['category']}</span>
                             <h2 class="blog-card-title">{post['title']}</h2>
