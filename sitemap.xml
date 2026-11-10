@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://mordechaigidur.co.il/</loc>
-    <lastmod>2026-10-01</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
@@ -17,12 +17,12 @@
   </url>
   <url>
     <loc>https://mordechaigidur.co.il/services/panel</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://mordechaigidur.co.il/services/reshet</loc>
-    <lastmod>2026-07-29</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
@@ -32,12 +32,12 @@
   </url>
   <url>
     <loc>https://mordechaigidur.co.il/services/gates</loc>
-    <lastmod>2026-07-26</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://mordechaigidur.co.il/services/passages</loc>
-    <lastmod>2026-08-01</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
@@ -57,7 +57,7 @@
   </url>
   <url>
     <loc>https://mordechaigidur.co.il/service-areas/</loc>
-    <lastmod>2026-09-21</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
@@ -163,6 +163,41 @@
   <url>
     <loc>https://mordechaigidur.co.il/service-areas/ofakim</loc>
     <lastmod>2026-08-19</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/about</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/lod</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/ramla</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/rosh-haayin</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/givatayim</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/ness-ziona</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://mordechaigidur.co.il/service-areas/kiryat-gat</loc>
+    <lastmod>2026-11-10</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
