@@ -52,6 +52,7 @@
         launcher.className = 'a11y-launcher';
         launcher.setAttribute('aria-expanded', 'false');
         launcher.setAttribute('aria-controls', 'a11y-panel');
+        launcher.setAttribute('aria-label', 'אפשרויות נגישות');
         launcher.innerHTML = `
             <i class="fas fa-universal-access" aria-hidden="true"></i>
             <span>אפשרויות נגישות</span>

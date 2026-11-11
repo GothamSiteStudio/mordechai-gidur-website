@@ -72,3 +72,13 @@
 /privacy                            /privacy-policy             301!
 /terms-of-use.html                  /terms-of-use               301!
 /accessibility.html                 /accessibility              301!
+
+# Build sources are not pages. Force 404 even though the files sit in the repo.
+/template_blog.html     /   404!
+/template_city.html     /   404!
+/template_service.html  /   404!
+/data.json              /   404!
+/data_blog.json         /   404!
+/data_services.json     /   404!
+/build.py               /   404!
+/report.json            /   404!
