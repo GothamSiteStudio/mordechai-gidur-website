@@ -5,5 +5,10 @@ Allow: /
 Disallow: /template_blog.html
 Disallow: /template_city.html
 Disallow: /template_service.html
+Disallow: /data.json
+Disallow: /data_blog.json
+Disallow: /data_services.json
+Disallow: /build.py
+Disallow: /report.json
 
 Sitemap: https://mordechaigidur.co.il/sitemap.xml

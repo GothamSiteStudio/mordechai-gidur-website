@@ -1,3 +1,4 @@
+import html as html_lib
 import json
 import re
 from pathlib import Path
@@ -10,6 +11,59 @@ def read_json(path: str):
 def write_file(path: Path, content: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8")
+
+
+def esc_attr(value) -> str:
+    """Escape a value that will be placed inside an HTML attribute (quotes included)."""
+    return html_lib.escape("" if value is None else str(value), quote=True)
+
+
+def replace_placeholder(page: str, key: str, value) -> str:
+    """Replace {key}. Values that land inside a tag are HTML-escaped so a quote
+    in the copy (תמ"א, for example) cannot close the attribute."""
+    token = "{" + key + "}"
+    if token not in page:
+        return page
+    raw = "" if value is None else str(value)
+    escaped = esc_attr(raw)
+    out = []
+    i = 0
+    while True:
+        j = page.find(token, i)
+        if j < 0:
+            out.append(page[i:])
+            break
+        head = page[:j]
+        in_tag = head.rfind("<") > head.rfind(">")
+        out.append(page[i:j])
+        out.append(escaped if in_tag else raw)
+        i = j + len(token)
+    return "".join(out)
+
+
+def apply_replacements(page: str, mapping: dict) -> str:
+    for key, value in mapping.items():
+        name = key[1:-1] if key.startswith("{") and key.endswith("}") else key
+        page = replace_placeholder(page, name, value)
+    return page
+
+
+def breadcrumb_jsonld(crumbs):
+    """crumbs: list of (name, absolute url or None). The current page may omit url."""
+    items = []
+    for i, (name, url) in enumerate(crumbs, start=1):
+        item = {"@type": "ListItem", "position": i, "name": name}
+        if url:
+            item["item"] = url
+        items.append(item)
+    block = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": items,
+    }
+    return ('    <script type="application/ld+json">\n    '
+            + json.dumps(block, ensure_ascii=False, indent=4).replace("\n", "\n    ")
+            + "\n    </script>")
 
 
 SITE = "https://mordechaigidur.co.il"
@@ -300,13 +354,49 @@ def _image_size(src: str):
     return None
 
 
-def _img_markup(src, alt, title, attrs=""):
-    """img, wrapped in picture/webp when a sibling .webp exists. The jpeg/png stays the fallback."""
-    img = f'<img src="{src}" alt="{alt}" title="{title}"{attrs}>'
+def _variant_url(webp_url: str, width: int) -> str:
+    """Root-relative resized sibling, e.g. hero.webp -> hero-480.webp, when the file exists."""
+    if not webp_url:
+        return ""
+    clean = webp_url.split("?", 1)[0].split("#", 1)[0]
+    path = Path(clean.lstrip("/"))
+    variant = path.with_name(f"{path.stem}-{width}.webp")
+    if not variant.is_file():
+        return ""
+    return "/" + variant.as_posix()
+
+
+def _webp_srcset(src: str) -> str:
+    """srcset of the webp plus any generated 480/800/960 widths. Empty when there is no webp."""
     webp = _webp_sibling(src)
     if not webp:
+        return ""
+    size = _image_size(src)
+    full_w = size[0] if size else None
+    parts = []
+    for width in (480, 800, 960):
+        if full_w and width >= full_w:
+            continue
+        url = _variant_url(webp, width)
+        if url:
+            parts.append(f"{url} {width}w")
+    if full_w:
+        parts.append(f"{webp} {full_w}w")
+    else:
+        parts.append(webp)
+    return ", ".join(parts)
+
+
+def _img_markup(src, alt, title, attrs="", sizes=""):
+    """img, wrapped in picture/webp when a sibling .webp exists. The jpeg/png stays the fallback.
+    alt/title/src are escaped so a quote in the copy cannot break the tag."""
+    img = (f'<img src="{esc_attr(src)}" alt="{esc_attr(alt)}" title="{esc_attr(title)}"{attrs}>')
+    srcset = _webp_srcset(src)
+    if not srcset:
         return img
-    return f'<picture><source srcset="{webp}" type="image/webp">{img}</picture>'
+    size_attr = f' sizes="{esc_attr(sizes)}"' if sizes else ""
+    return (f'<picture><source srcset="{esc_attr(srcset)}"{size_attr} type="image/webp">'
+            f'{img}</picture>')
 
 
 def _render_figure(image, indent=8):
@@ -322,7 +412,8 @@ def _render_figure(image, indent=8):
         if size:
             dims = f' width="{size[0]}" height="{size[1]}"'
     img = _img_markup(image["src"], image["alt"], title,
-                      f'{dims} loading="lazy" decoding="async"')
+                      f'{dims} loading="lazy" decoding="async"',
+                      sizes="(max-width: 768px) 92vw, 720px")
     parts = [f'{pad}<figure class="article-figure">',
              f'{pad}    {img}']
     if caption:
@@ -346,7 +437,8 @@ def _render_hero_figure(image, indent=24):
         if size:
             dims = f' width="{size[0]}" height="{size[1]}"'
     img = _img_markup(image["src"], image["alt"], title,
-                      f'{dims} fetchpriority="high" decoding="async"')
+                      f'{dims} fetchpriority="high" decoding="async"',
+                      sizes="(max-width: 768px) 100vw, 800px")
     parts = [f'{pad}<figure class="article-figure service-hero-figure">',
              f'{pad}    {img}']
     if caption:
@@ -357,13 +449,17 @@ def _render_hero_figure(image, indent=24):
 
 def _hero_preload(src):
     """Preload tag for the page's LCP image; empty when the page has no hero image.
-    Prefers the webp sibling. Browsers that cannot use it still load the fallback in the page."""
+    Prefers a responsive webp srcset so a phone does not download the full-size file."""
     if not src:
         return ""
     webp = _webp_sibling(src)
-    if webp:
-        return f'    <link rel="preload" as="image" href="{webp}" type="image/webp" fetchpriority="high">'
-    return f'    <link rel="preload" as="image" href="{src}" fetchpriority="high">'
+    href = webp or src
+    srcset = _webp_srcset(src) if webp else ""
+    if srcset:
+        return (f'    <link rel="preload" as="image" href="{esc_attr(href)}" type="image/webp" '
+                f'imagesrcset="{esc_attr(srcset)}" imagesizes="(max-width: 768px) 100vw, 800px" '
+                f'fetchpriority="high">')
+    return f'    <link rel="preload" as="image" href="{esc_attr(href)}" fetchpriority="high">'
 
 
 def _hero_background_style(src: str) -> str:
@@ -554,22 +650,29 @@ def build_city_pages():
         unique_paragraph_1 = para_1[3:]
         unique_paragraph_2 = para_2[3:]
 
-        new_content = template
-        new_content = new_content.replace("{extra_sections}", extra_sections)
-        new_content = new_content.replace("{recommended_block}", recommended_block)
-        new_content = new_content.replace("{nearby_cities}", nearby_cities)
-        new_content = new_content.replace("{related_posts}", related_posts)
-        new_content = new_content.replace("{helpful_links}", helpful_links)
-        new_content = new_content.replace("{faq_block}", faq_block)
-        new_content = new_content.replace("{cta_block}", cta_block)
-        new_content = new_content.replace("{faq_schema}", faq_schema)
-        new_content = new_content.replace("{canonical}", canonical)
-        new_content = new_content.replace("{og_image}", OG_IMAGE_DEFAULT)
-        new_content = new_content.replace("{city_name}", page["city_name"])
-        new_content = new_content.replace("{region}", page["region"])
-        new_content = new_content.replace("{seo_desc_start}", page["seo_desc_start"])
-        new_content = new_content.replace("{unique_paragraph_1}", unique_paragraph_1)
-        new_content = new_content.replace("{unique_paragraph_2}", unique_paragraph_2)
+        breadcrumb = breadcrumb_jsonld([
+            ("דף הבית", f"{SITE}/"),
+            ("אזורי שירות", f"{SITE}/service-areas/"),
+            (page["city_name"], canonical),
+        ])
+        new_content = apply_replacements(template, {
+            "extra_sections": extra_sections,
+            "recommended_block": recommended_block,
+            "nearby_cities": nearby_cities,
+            "related_posts": related_posts,
+            "helpful_links": helpful_links,
+            "faq_block": faq_block,
+            "cta_block": cta_block,
+            "faq_schema": faq_schema,
+            "breadcrumb_jsonld": breadcrumb,
+            "canonical": canonical,
+            "og_image": OG_IMAGE_DEFAULT,
+            "city_name": page["city_name"],
+            "region": page["region"],
+            "seo_desc_start": page["seo_desc_start"],
+            "unique_paragraph_1": unique_paragraph_1,
+            "unique_paragraph_2": unique_paragraph_2,
+        })
 
         filename = output_dir / page["filename"]
         write_file(filename, new_content)
@@ -686,7 +789,13 @@ def build_service_pages():
         intro_paragraph = para_1[3:]
         uses_intro = para_2[3:]
 
+        breadcrumb = breadcrumb_jsonld([
+            ("דף הבית", f"{SITE}/"),
+            ("שירותים", f"{SITE}/services/"),
+            (svc["service_name"], svc["canonical"]),
+        ])
         replacements = {
+            "{breadcrumb_jsonld}": breadcrumb,
             "{city_links}": city_links,
             "{hero_figure}": hero_figure,
             "{top_cta}": top_cta,
@@ -724,10 +833,8 @@ def build_service_pages():
         }
 
         new_content = template
-        for placeholder, value in replacements.items():
-            if placeholder == "{og_image}":
-                continue
-            new_content = new_content.replace(placeholder, value)
+        pending = {k: v for k, v in replacements.items() if k != "{og_image}"}
+        new_content = apply_replacements(new_content, pending)
 
         # og:image last, so a service with no hero_image can still share the first
         # picture the finished page actually shows rather than the site default.
@@ -736,7 +843,7 @@ def build_service_pages():
             first = re.search(r'src="(?:\.\./|/)?(pictures/[^"]+\.(?:jpe?g|png|webp))"', new_content)
             if first:
                 og_image = f"{SITE}/{first.group(1)}"
-        new_content = new_content.replace("{og_image}", og_image)
+        new_content = replace_placeholder(new_content, "og_image", og_image)
 
         filename = output_dir / svc["filename"]
         write_file(filename, new_content)
@@ -850,6 +957,14 @@ def _post_schema(post, url):
         "author": _business_node(),
         "publisher": _business_node(),
         "mainEntityOfPage": url,
+    }, {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "דף הבית", "item": f"{SITE}/"},
+            {"@type": "ListItem", "position": 2, "name": "בלוג", "item": f"{SITE}/blog/"},
+            {"@type": "ListItem", "position": 3, "name": post["title"], "item": url},
+        ],
     }]
     if post.get("faq"):
         blocks.append({
@@ -1018,7 +1133,8 @@ def _build_index_content(posts):
         size = _image_size(img)
         dims = f' width="{size[0]}" height="{size[1]}"' if size else ""
         card_img = _img_markup(img, post["image_alt"], post["image_alt"],
-                               f"{dims} loading=\"lazy\" decoding=\"async\"")
+                               f"{dims} loading=\"lazy\" decoding=\"async\"",
+                               sizes="(max-width: 700px) 92vw, 380px")
         cards.append(f"""                <article class="blog-card">
                     <a href="/blog/{post['slug']}" class="blog-card-link">
                         <div class="blog-card-image">{card_img}</div>
@@ -1088,15 +1204,17 @@ def build_blog():
     # Individual posts
     for index, post in enumerate(posts):
         url = f"{SITE}/blog/{post['slug']}"
-        page = template
-        page = page.replace("{meta_title}", post["meta_title"])
-        page = page.replace("{meta_description}", post["meta_description"])
-        page = page.replace("{meta_keywords}", post["meta_keywords"])
-        page = page.replace("{canonical}", url)
-        page = page.replace("{hero_preload}", _hero_preload(f"/pictures/{post['image']}"))
-        page = page.replace("{og_image}", f"{SITE}/pictures/{post['image']}")
-        page = page.replace("{schema}", _post_schema(post, url))
-        page = page.replace("{content}", _build_post_content(post, posts, cities, index))
+        page = apply_replacements(template, {
+            "meta_title": post["meta_title"],
+            "meta_description": post["meta_description"],
+            "meta_keywords": post["meta_keywords"],
+            "canonical": url,
+            "hero_preload": _hero_preload(f"/pictures/{post['image']}"),
+            "og_image": f"{SITE}/pictures/{post['image']}",
+            "schema": _post_schema(post, url),
+            "content": _build_post_content(post, posts, cities, index),
+            "breadcrumb_jsonld": "",
+        })
         write_file(output_dir / f"{post['slug']}.html", page)
         print(f"Created blog post: blog/{post['slug']}.html")
 
@@ -1137,14 +1255,17 @@ def build_blog():
     # justification above also rested on "גידור אתרי בנייה", which query-routing has since
     # quarantined as a 98.1%-desktop sweep. So: name the archive, list what it indexes,
     # and claim neither מחיר nor תקן - both belong to articles Google already ranks.
-    page = page.replace("{meta_title}", "מדריכים ומאמרים על גידור אתרי בנייה | מרדכי גידור")
-    page = page.replace("{meta_description}", "כל המדריכים של מרדכי גידור על גידור אתרי בנייה במקום אחד: סוגי גדרות, שילוט לאתר, שערים ומעברים, הגנת עצים ומיתוג על הגדר. 050-757-5570")
-    page = page.replace("{meta_keywords}", "מדריכי גידור, בלוג גידור אתרי בנייה, מאמרים על גידור אתרי בנייה, גדר איסכורית")
-    page = page.replace("{canonical}", f"{SITE}/blog/")
-    page = page.replace("{og_image}", OG_IMAGE_DEFAULT)
-    page = page.replace("{hero_preload}", "")
-    page = page.replace("{schema}", schema_html)
-    page = page.replace("{content}", _build_index_content(posts))
+    page = apply_replacements(page, {
+        "meta_title": "מדריכים ומאמרים על גידור אתרי בנייה | מרדכי גידור",
+        "meta_description": "כל המדריכים של מרדכי גידור על גידור אתרי בנייה במקום אחד: סוגי גדרות, שילוט לאתר, שערים ומעברים, הגנת עצים ומיתוג על הגדר. 050-757-5570",
+        "meta_keywords": "מדריכי גידור, בלוג גידור אתרי בנייה, מאמרים על גידור אתרי בנייה, גדר איסכורית",
+        "canonical": f"{SITE}/blog/",
+        "og_image": OG_IMAGE_DEFAULT,
+        "hero_preload": "",
+        "schema": schema_html,
+        "content": _build_index_content(posts),
+        "breadcrumb_jsonld": "",
+    })
     write_file(output_dir / "index.html", page)
     print("Created blog index: blog/index.html")
 

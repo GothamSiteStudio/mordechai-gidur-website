@@ -10,6 +10,10 @@
 # repeat visits fast while still propagating an edit within the hour.
 /style.css
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/icons.css
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/third-party.js
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /accessibility.js
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 /preferred-source.js
